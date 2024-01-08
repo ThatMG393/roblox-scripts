@@ -1,4 +1,3 @@
-
 local ServersAmount = 25 -- 10, 25, 50, 100
 local PlaceServers = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=" .. ServersAmount
 local PingRequire = 300 -- ~100ms
@@ -9,7 +8,7 @@ function ShowNotif(opts, callback)
     local Bindable = Instance.new("BindableFunction")
     Bindable.OnInvoke = callback
     opts.Callback = Bindable
-    
+
     game.GetService("StarterGui"):SetCore("SendNotification", opts)
 end
 
