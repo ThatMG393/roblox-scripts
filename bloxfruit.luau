@@ -1,8 +1,8 @@
 local GHRepo = "https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master"
 
-local KavoUI = require('Utils/kavo-ui') or loadstring(GHRepo .. "/Utils/kavo-ui.lua")()
-local ThreadLib = require('Utils/ThreadLib') or loadstring(GHRepo .. "/Utils/ThreadLib.luau")()
-local UtilLib = require('Utils/NecesarryUtils') or loadstring(GHRepo .. "/Utils/NecesarryUtils.luau")()
+local KavoUI = require('Utils/kavo-ui') -- or loadstring(GHRepo .. "/Utils/kavo-ui.lua")()
+local ThreadLib = require('Utils/ThreadLib') -- or loadstring(GHRepo .. "/Utils/ThreadLib.luau")()
+local UtilLib = require('Utils/NecesarryUtils') -- or loadstring(GHRepo .. "/Utils/NecesarryUtils.luau")()
 
 local Players = game:GetService('Players')
 
@@ -22,8 +22,8 @@ local PingLabel = InfoSection:NewLabel("Ping: 69ms")
 local AboutSection = InformationTab:NewSection("About")
 AboutSection:NewLabel("Made by ThatMG393")
 
-ThreadLib.New(function (thread)
-	while thread.active do
+ThreadLib.NewThread(function (thread)
+	while true do
 		PlayersLabel:UpdateLabel(#Players:GetPlayers())
 
 		PingLabel:UpdateLabel(Players.LocalPlayer:GetNetworkPing() * 1000)
@@ -123,8 +123,8 @@ ESPAllPlayer = ESPSection:NewToggle("ESP Player", "ESP All Player", function (st
 	end
 end)
 
-PlayerESPThread = ThreadLib.New(function (thread)
-	while thread.active do
+PlayerESPThread = ThreadLib.NewThread(function (thread)
+	while true do
 		if not UtilLib.IsNil(SelectedPlayer) and ESPTargetPlayer:GetToggleState() then
 			if not SelectedPlayer.Character:WaitForChild("Head"):FindFirstChild('FrameESP') then
 				MakeESPUI(SelectedPlayer)

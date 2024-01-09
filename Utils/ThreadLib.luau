@@ -1,49 +1,20 @@
-local ThreadLib = {}
+local ThreadLib = { }
 
-function ThreadLib.New(f)
-	local this  = { }
-	this.active = false
-	this.func   = f
+function ThreadLib.NewThread(ft)
+	local Thread = {
+		Function = ft,
+		Coroutine = coroutine.create(ft)
+	}
 
-	-- private
-	local function Fire(ff)
-		local event = Instance.new('BindableEvent')
-		event.Event:connect(function ()
-			ff(this)
-		end)
-		event:Fire()
+	function Thread.Start()
+		coroutine.resume(Thread.Coroutine, Thread.Coroutine)
 	end
 
-	-- public
---	function this:SetFunc(f)
---		this.func = f
---		return this
---	end
-
-	function this:Start(t)
-		this.active = true
-		if this.func then
-			Fire(this.func)
-			if t and type(t) == 'number' then
-				delay(t, function ()
-					this.active = false
-				end)
-			end
-		end
-		return this
+	function Thread.Stop()
+		coroutine.yield(Thread.Coroutine)
 	end
 
-	function this:Stop()
-		this.active = false
-		return this
-	end
-
-	function this:Destroy()
-		 this:Stop()
-		 this.func = nil
-	end
-
-	return this
+	return Thread
 end
 
 return ThreadLib
