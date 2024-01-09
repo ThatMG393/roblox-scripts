@@ -1,17 +1,19 @@
 local ThreadLib = { }
 
-function ThreadLib.NewThread(ft)
+function ThreadLib.NewThread(func)
 	local Thread = {
-		Function = ft,
-		Coroutine = coroutine.create(ft)
+		CoroFunc = func,
+		Coroutine = nil
 	}
 
 	function Thread.Start()
-		coroutine.resume(Thread.Coroutine, Thread.Coroutine)
+		Thread.Coroutine = coroutine.create(func)
+		coroutine.resume(Thread.Coroutine)
 	end
 
 	function Thread.Stop()
-		coroutine.yield(Thread.Coroutine)
+		if Thread.Coroutine == nil then return end
+		return coroutine.yield(Thread.Coroutine)
 	end
 
 	return Thread
