@@ -46,9 +46,6 @@ local PlayerSection = CombatTab:NewSection("Player")
 
 local SelectedPlayer: Player = nil
 
-
-local PlayerESPThread = nil
-
 local PlayerSelector = PlayerSection:NewDropdown("Players", "Select a Player to target", Players.GetPlayers(), function(selected)
 	SelectedPlayer = selected
 end)
@@ -58,6 +55,52 @@ PlayerSection:NewButton("Refresh Players", "Refresh Player selector", function()
 end)
 
 local ESPSection = CombatTab:NewSection("ESP")
+local PlayerESPThread = nil
+
+local CalculateDist = function (player: Player)
+	local Origin = Players.LocalPlayer.Character.WaitForChild("Head").Position
+	local Target = player.Character:WaitForChild("Head").Position
+
+	local Dist = (Origin - Target).Magnitude / 3
+	return "Distance: " .. Dist .. "M"
+end
+local MakePlayerHealth = function (player: Player)
+	local CurrentHealth = player.Character:WaitForChild("Humanoid").Health
+	local MaxHealth = player.Character:WaitForChild("Humanoid").MaxHealth
+	
+	return CurrentHealth .. "/" .. MaxHealth
+end
+
+local MakeESPUI = function (player: Player)
+	local ESPFrame = Instance.new("BillboardGui")
+	ESPFrame.Parent = player.Character:WaitForChild("Head")
+	ESPFrame.Adornee = player.Character:WaitForChild("Head")
+	ESPFrame.AlwaysOnTop = true
+	ESPFrame.Name = "FrameESP"
+
+	local ESPName = Instance.new("TextLabel")
+	ESPName.Parent = ESPFrame
+	ESPName.Name = "DistanceESP"
+	ESPName.TextTransparency = 0
+	ESPName.BackgroundTransparency = 1
+	ESPName.TextSize = 14
+	ESPName.TextWrapped = true
+	ESPName.Size = UDim2.new(0, 200, 0, 30)
+	ESPName.Position = UDim2.new(0, 25, 0, 0)
+	ESPName.Text = CalculateDist(player)
+
+	local ESPHealth = Instance.new('TextLabel')
+	ESPHealth.Parent = ESPFrame
+	ESPHealth.Name = "HealthESP"
+	ESPHealth.Text = MakePlayerHealth(player)
+end
+
+local ChangeESPValues = function (player: Player)
+	local PlayerHead = player.Character:WaitForChild("Head")
+
+	PlayerHead['FrameESP'].DistanceESP.Text = CalculateDist(player)
+	PlayerHead['FrameESP'].HealthESP.Text = MakePlayerHealth(player)
+end
 
 local ESPAllPlayer = nil
 local ESPTargetPlayer = ESPSection:NewToggle("ESP Target", "ESP Selected Player", function(state)
