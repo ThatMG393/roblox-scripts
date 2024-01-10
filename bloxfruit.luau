@@ -17,17 +17,16 @@ local Main = EngoLib.new(
 
 local InformationTab = Main:CreateTab("Information")
 
-local InfoSection = InformationTab:NewSection("Info")
-local PlayersLabel = InfoSection:NewLabel("Players: 2")
-local PingLabel = InfoSection:NewLabel("Ping: 69ms")
+local PlayersLabel = InformationTab:NewLabel("Players: 0")
+local PingLabel = InformationTab:NewLabel("Ping: 0ms")
 
 local AboutSection = InformationTab:NewSection("About")
 AboutSection:NewLabel("Made by ThatMG393")
 
 ThreadLib.NewThread(function ()
 	while true do
-		PlayersLabel:UpdateLabel(#Players:GetPlayers())
-		PingLabel:UpdateLabel(Players.LocalPlayer:GetNetworkPing() * 1000)
+		PlayersLabel:UpdateLabel("Players: " .. #Players:GetPlayers())
+		PingLabel:UpdateLabel("Ping : " .. Players.LocalPlayer:GetNetworkPing() * 1000 .. "ms")
 
 		wait(1500)
 	end
