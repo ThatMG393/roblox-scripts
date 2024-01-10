@@ -2,6 +2,7 @@ local GHRepo = "https://raw.githubusercontent.com/ThatMG393/roblox-scripts/maste
 
 local HttpService = game:GetService('HttpService')
 local Players = game:GetService('Players')
+local RunService = game:GetService('RunService')
 
 local Fluent = loadstring(game:HttpGet(GHRepo .. "/UI/fluent-ui.lua"))()
 local ThreadLib = loadstring(game:HttpGet(GHRepo .. "/Utils/ThreadLib.luau"))()
@@ -35,25 +36,70 @@ local CombatTab = MainWin:AddTab({
 local PlayerSection = CombatTab:AddSection("Player")
 
 function BuildPlayerDropdown()
-	local PlayersList = { }
-	for _, player in pairs(Players:GetPlayers()) do table.insert(PlayersList, player.Name) end
+	local PlayersList = { "" }
+	for _, player in pairs(Players:GetPlayers()) do
+		if player ~= Players.LocalPlayer then
+			table.insert(PlayersList, player.Name)
+		end
+	end
 	return PlayersList
 end
+
+local SelectedPlayer: Player? = nil
 
 local PlayersDropdown = PlayerSection:AddDropdown("Dropdown", {
 	Title = "Select Player",
 	Values = BuildPlayerDropdown(),
 	Multi = false,
 	Callback = function (selected)
-		print(selected)
-	end
+		if selected == "" then
+			SelectedPlayer = nil
+		else
+			SelectedPlayer = Players:FindFirstChild(selected)
+		end
+	end,
+	Default = 1
 })
 
-local PlayersDropdownRefreshButton = PlayerSection:AddButton({
+PlayerSection:AddButton({
 	Title = "Refresh",
 	Callback = function ()
 		PlayersDropdown:SetValues(BuildPlayerDropdown())
-	end
+	end 
 })
+
+RunService.Heartbeat:ConnectParallel(function()
+	if not UtilLib.IsNil(SelectedPlayer) then
+		local PlayerCharacter = SelectedPlayer.Character
+
+		if PlayerCharacter then
+			if PlayerCharacter:FindFirstChildWhichIsA("Highlight") then
+				PlayerCharacter:FindFirstChildWhichIsA("Highlight"):Destroy()
+			end
+
+			local Highlight = Instance.new("Highlight")
+			Highlight.FillColor = Color3.new(0, 1)
+			Highlight.Parent = PlayerCharacter
+		end
+	else
+		for _, player in pairs(Players:GetPlayers()) do
+			if player ~= Players.LocalPlayer then
+				local PlayerCharacter = player.Character
+
+				if PlayerCharacter then
+					if PlayerCharacter:FindFirstChildWhichIsA("Highlight") then
+						PlayerCharacter:FindFirstChildWhichIsA("Highlight"):Destroy()
+					end
+
+					local Highlight = Instance.new("Highlight")
+					Highlight.FillColor = Color3.new(0, 1)
+					Highlight.Parent = PlayerCharacter
+				end
+			end
+		end
+	end
+end)
+
+
 
 
