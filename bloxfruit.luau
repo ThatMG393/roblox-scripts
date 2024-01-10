@@ -97,7 +97,7 @@ RunService.Heartbeat:Connect(function()
 			end
 
 			local Highlight = Instance.new("Highlight")
-			Highlight.FillColor = Color3.new(0, 1)
+			Highlight.FillColor = Color3.new(1, 0, 0)
 			Highlight.Parent = PlayerCharacter
 		end
 	else
@@ -106,13 +106,11 @@ RunService.Heartbeat:Connect(function()
 				local PlayerCharacter = player.Character
 
 				if PlayerCharacter then
-					if PlayerCharacter:FindFirstChildWhichIsA("Highlight") then
-						PlayerCharacter:FindFirstChildWhichIsA("Highlight"):Destroy()
+					if not PlayerCharacter:FindFirstChildWhichIsA("Highlight") then
+						local Highlight = Instance.new("Highlight")	
+						Highlight.FillColor = Color3.new(1, 0, 0)
+						Highlight.Parent = PlayerCharacter
 					end
-
-					local Highlight = Instance.new("Highlight")
-					Highlight.FillColor = Color3.new(0, 1)
-					Highlight.Parent = PlayerCharacter
 				end
 			end
 		end
