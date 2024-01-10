@@ -51,15 +51,16 @@ local PlayersDropdown = PlayerSection:AddDropdown("Dropdown", {
 	Title = "Select Player",
 	Values = BuildPlayerDropdown(),
 	Multi = false,
-	Callback = function (selected)
-		if selected == "" then
-			SelectedPlayer = nil
-		else
-			SelectedPlayer = Players:FindFirstChild(selected)
-		end
-	end,
 	Default = 1
 })
+
+PlayersDropdown:OnChanged(function (selected)
+	if selected == "" then
+		SelectedPlayer = nil
+	else
+		SelectedPlayer = Players:FindFirstChild(selected)
+	end
+end)
 
 PlayerSection:AddButton({
 	Title = "Refresh",
@@ -68,7 +69,7 @@ PlayerSection:AddButton({
 	end 
 })
 
-RunService.Heartbeat:ConnectParallel(function()
+RunService.Heartbeat:Connect(function()
 	if not UtilLib.IsNil(SelectedPlayer) then
 		local PlayerCharacter = SelectedPlayer.Character
 
