@@ -1,8 +1,10 @@
 local GHRepo = "https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master"
 
-local KavoUI = assert(loadstring(GHRepo .. "/Utils/kavo-ui.lua")())
-local ThreadLib = assert(loadstring(GHRepo .. "/Utils/ThreadLib.luau")())
-local UtilLib = assert(loadstring(GHRepo .. "/Utils/NecesarryUtils.luau")())
+local HttpService = game:GetService('HttpService')
+
+local KavoUI = loadstring(HttpService:GetAsync(GHRepo .. "/Utils/kavo-ui.lua"))()
+local ThreadLib = loadstring(HttpService:GetAsync(GHRepo .. "/Utils/ThreadLib.luau"))()
+local UtilLib = loadstring(HttpService:GetAsync(GHRepo .. "/Utils/NecesarryUtils.luau"))()
 
 local Players = game:GetService('Players')
 
