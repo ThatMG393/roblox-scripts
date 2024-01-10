@@ -1,12 +1,12 @@
 local GHRepo = "https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master"
 
 local HttpService = game:GetService('HttpService')
-
-local KavoUI = loadstring(HttpService:GetAsync(GHRepo .. "/Utils/kavo-ui.lua"))()
-local ThreadLib = loadstring(HttpService:GetAsync(GHRepo .. "/Utils/ThreadLib.luau"))()
-local UtilLib = loadstring(HttpService:GetAsync(GHRepo .. "/Utils/NecesarryUtils.luau"))()
-
 local Players = game:GetService('Players')
+
+local KavoUI = loadstring(game:HttpGet(GHRepo .. "/Utils/kavo-ui.lua"))()
+local ThreadLib = loadstring(game:HttpGet(GHRepo .. "/Utils/ThreadLib.luau"))()
+local UtilLib = loadstring(game:HttpGet(GHRepo .. "/Utils/NecesarryUtils.luau"))()
+
 
 local Main = KavoUI.CreateLib(
 	"Blox Fruits | ThatMG393",
