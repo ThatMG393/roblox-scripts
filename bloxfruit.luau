@@ -3,54 +3,51 @@ local GHRepo = "https://raw.githubusercontent.com/ThatMG393/roblox-scripts/maste
 local HttpService = game:GetService('HttpService')
 local Players = game:GetService('Players')
 
-local EngoLib = loadstring(game:HttpGet(GHRepo .. "/Utils/engo-lib.lua"))()
+local Fluent = loadstring(game:HttpGet(GHRepo .. "/UI/fluent-ui.lua"))()
 local ThreadLib = loadstring(game:HttpGet(GHRepo .. "/Utils/ThreadLib.luau"))()
 local UtilLib = loadstring(game:HttpGet(GHRepo .. "/Utils/NecesarryUtils.luau"))()
 
-local Main = EngoLib.new(
-	"Blox Fruits | ThatMG393",
-	"",
-	Enum.KeyCode.LeftControl
-)
+local MainWin = Fluent:CreateWindow({
+	Title = "Blox Fruits | ThatMG393",
+	TabWidth = 160,
+	Size = UDim2.fromOffset(580, 460),
+	Acrylic = true,
+	Theme = "Dark"
+})
 
 --------------------INFORMATION---------------------
 
-local InformationTab = Main:CreateTab("Information")
+local InformationTab = MainWin:AddTab({
+	Title = "Information", Icon = ""
+})
 
-local PlayersLabel = InformationTab:NewLabel("Players: 0")
-local PingLabel = InformationTab:NewLabel("Ping: 0ms")
+local PlayersLabel = InformationTab:AddParagraph({
+	Title = "Developers",
+	Content = "ThatMG393"
+})
 
-local AboutSection = InformationTab:NewSection("About")
-AboutSection:NewLabel("Made by ThatMG393")
+--------------------COMBAT--------------------
 
-ThreadLib.NewThread(function ()
-	while true do
-		PlayersLabel:UpdateLabel("Players: " .. #Players:GetPlayers())
-		PingLabel:UpdateLabel("Ping : " .. Players.LocalPlayer:GetNetworkPing() * 1000 .. "ms")
+local CombatTab = MainWin:AddTab({
+	Title = "Combat", Icon = ""
+})
 
-		wait(1500)
+local PlayerSection = CombatTab:AddSection("Player")
+
+local PlayersDropdown = PlayerSection:AddDropdown("Dropdown", {
+	Title = "Select Player",
+	Values = Players:GetPlayers(),
+	Multi = false,
+	Callback = function (selected)
+		print(selected)
 	end
-end).Start()
+})
 
---------------------AUTOFARM---------------------
-
-local FarmTab = Main:CreateTab("AutoFarm")
-
-local AutoFarmToggle = FarmTab:CreateToggle("Auto Farm Level", function(state)  end)
-
---------------------COMBAT---------------------
-
-local CombatTab = Main:NewTab("Combat")
-
-local SelectedPlayer: Player = nil
-
-local PlayerSelector = CombatTab:CreateDropdown("Players", Players:GetPlayers(), function(selected)
-	SelectedPlayer = selected
-end)
-
-CombatTab:CreateButton("Refresh Players", function()
-	PlayerSelector:Refresh(Players.GetPlayers())
-end)
-
+local PlayersDropdownRefreshButton = PlayerSection:AddButton({
+	Title = "Refresh",
+	Callback = function ()
+		PlayersDropdown:SetValues(Players:GetPlayers())
+	end
+})
 
 
