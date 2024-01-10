@@ -1,8 +1,8 @@
 local GHRepo = "https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master"
 
-local KavoUI = loadstring(GHRepo .. "/Utils/kavo-ui.lua")()
-local ThreadLib = loadstring(GHRepo .. "/Utils/ThreadLib.luau")()
-local UtilLib = loadstring(GHRepo .. "/Utils/NecesarryUtils.luau")()
+local KavoUI = assert(loadstring(GHRepo .. "/Utils/kavo-ui.lua")())
+local ThreadLib = assert(loadstring(GHRepo .. "/Utils/ThreadLib.luau")())
+local UtilLib = assert(loadstring(GHRepo .. "/Utils/NecesarryUtils.luau")())
 
 local Players = game:GetService('Players')
 
