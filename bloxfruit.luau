@@ -77,6 +77,18 @@ PlayerSection:AddButton({
 
 RunService.Heartbeat:Connect(function()
 	if not UtilLib.IsNil(SelectedPlayer) then
+		for _, player in pairs(Players:GetPlayers()) do
+			if player ~= Players.LocalPlayer and player ~= SelectedPlayer then
+				local PlayerCharacter = player.Character
+
+				if PlayerCharacter then
+					if PlayerCharacter:FindFirstChildWhichIsA("Highlight") then
+						PlayerCharacter:FindFirstChildWhichIsA("Highlight"):Destroy()
+					end
+				end
+			end
+		end
+
 		local PlayerCharacter = SelectedPlayer.Character
 
 		if PlayerCharacter then
