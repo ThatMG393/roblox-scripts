@@ -55,6 +55,12 @@ local PlayersDropdown = PlayerSection:AddDropdown("Dropdown", {
 })
 
 PlayersDropdown:OnChanged(function (selected)
+	Fluent:Notify({
+		Title = "Selected",
+		Content = selected,
+		Duration = 3
+	})
+
 	if selected == "" then
 		SelectedPlayer = nil
 	else
