@@ -34,9 +34,15 @@ local CombatTab = MainWin:AddTab({
 
 local PlayerSection = CombatTab:AddSection("Player")
 
+function BuildPlayerDropdown()
+	local PlayersList = { }
+	for _, player in pairs(Players:GetPlayers()) do table.insert(PlayersList, player.Name) end
+	return PlayersList
+end
+
 local PlayersDropdown = PlayerSection:AddDropdown("Dropdown", {
 	Title = "Select Player",
-	Values = Players:GetPlayers(),
+	Values = BuildPlayerDropdown(),
 	Multi = false,
 	Callback = function (selected)
 		print(selected)
@@ -46,7 +52,7 @@ local PlayersDropdown = PlayerSection:AddDropdown("Dropdown", {
 local PlayersDropdownRefreshButton = PlayerSection:AddButton({
 	Title = "Refresh",
 	Callback = function ()
-		PlayersDropdown:SetValues(Players:GetPlayers())
+		PlayersDropdown:SetValues(BuildPlayerDropdown())
 	end
 })
 
