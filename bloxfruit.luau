@@ -3,7 +3,7 @@ local GHRepo = "https://raw.githubusercontent.com/ThatMG393/roblox-scripts/maste
 local HttpService = game:GetService('HttpService')
 local Players = game:GetService('Players')
 
-local EngoLib = loadstring(game:HttpGet(GHRepo .. "/Utils/engo-lib.lua"))()
+local EngoLib = loadstring(game:HttpGet(GHRepo .. "/Utils/engo-lib.lua"))
 local ThreadLib = loadstring(game:HttpGet(GHRepo .. "/Utils/ThreadLib.luau"))()
 local UtilLib = loadstring(game:HttpGet(GHRepo .. "/Utils/NecesarryUtils.luau"))()
 
