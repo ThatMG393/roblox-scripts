@@ -113,7 +113,7 @@ btnSex.MouseButton1Click:Connect(function()
 	BodyGyro.CFrame = CFrame.new()
 	BodyGyro.Parent = CurrentHumanoid
 
-	local TargetPlayerHumanoid = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
+	local TargetPlayerHumanoid = TargetPlayer.Character.HumanoidRootPart
 	while CurrentHumanoid.Parent.Parent ~= nil do
 		wait()
 
