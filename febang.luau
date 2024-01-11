@@ -93,7 +93,7 @@ btnSex.MouseButton1Click:Connect(function()
 	
 	local BangAnimLoader = CurrentHumanoid:LoadAnimation(BangAnimSrc)
 	BangAnimLoader:Play()
-	BangAnimLoader:AdjustSpeed(15)
+	BangAnimLoader:AdjustSpeed(20)
 
 	pcall(function()
 		CurrentHumanoid.Parent.Pants:Destroy()
@@ -108,11 +108,11 @@ btnSex.MouseButton1Click:Connect(function()
 		local TargetPlayerHead = TargetPlayer.Character:FindFirstChild("Head")
 		local TargetPlayerHRP = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
 		
-		Players.LocalPlayer.Character.HumanoidRootPart.CFrame = TargetPlayerHRP.CFrame + Vector3.new(0, 0, 0.7)
+		Players.LocalPlayer.Character.HumanoidRootPart.CFrame = TargetPlayerHRP.CFrame + Vector3.new(0, 0, 1)
 	
 		local WeldConstraint = Instance.new("WeldConstraint")
 		WeldConstraint.Part0 = TargetPlayerHead
 		WeldConstraint.Part1 = Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-		WeldConstraint.Parent = TargetPlayerHead
+		WeldConstraint.Parent = WeldConstraint.Part0
 	end
 end)
