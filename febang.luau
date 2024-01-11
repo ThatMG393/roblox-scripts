@@ -119,7 +119,7 @@ btnSex.MouseButton1Click:Connect(function()
 		wait()
 
 		if TargetPlayerHRP then
-			local offset = Vector3.new(0, 0, -2)
+			local offset = Vector3.new(0, 0, 1)
 			local desiredPosition = TargetPlayerHRP.CFrame:PointToWorldSpace(offset)
 
 			CurrentPlayer.Character:SetPrimaryPartCFrame(CFrame.new(desiredPosition))
