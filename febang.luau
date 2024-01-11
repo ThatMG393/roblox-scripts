@@ -115,7 +115,7 @@ btnSex.MouseButton1Click:Connect(function()
 			(
 				CurrentHRP.Position
 			):Lerp(
-				TargetPlayerHRP.Position + Vector3.new(0, 0, 1), 0.1
+				TargetPlayerHRP.Position, 0.1
 			)
 		)
 	
