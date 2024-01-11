@@ -108,7 +108,16 @@ btnSex.MouseButton1Click:Connect(function()
 		local TargetPlayerHead = TargetPlayer.Character:FindFirstChild("Head")
 		local TargetPlayerHRP = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
 		
-		Players.LocalPlayer.Character.HumanoidRootPart.CFrame:Lerp(TargetPlayerHRP.Position + Vector3.new(0, 0, 1), 0.5)
+
+		local CurrentHRP = Players.LocalPlayer.Character.HumanoidRootPart
+
+		CurrentHRP.CFrame = CFrame.new(
+			(
+				CurrentHRP.Position
+			):Lerp(
+				TargetPlayerHRP.Position + Vector3.new(0, 0, 1), 0.1
+			)
+		)
 	
 		local WeldConstraint = Instance.new("WeldConstraint")
 		WeldConstraint.Part0 = TargetPlayerHead
