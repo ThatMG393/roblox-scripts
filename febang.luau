@@ -102,7 +102,7 @@ btnSex.MouseButton1Click:Connect(function()
 	local notfunny = hummy:LoadAnimation(stupid)
 
 	notfunny:Play()
-	notfunny:AdjustSpeed(5)
+	notfunny:AdjustSpeed(15)
 
 	while hummy.Parent.Parent ~= nil do
 		wait()
