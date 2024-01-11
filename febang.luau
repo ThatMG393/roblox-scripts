@@ -1,4 +1,5 @@
 local MakeDraggable = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))()
+local Players = game:GetService("Players")
 
 local SimpleSexGUI = Instance.new("ScreenGui") 
 local FGUI = Instance.new("Frame")
@@ -84,32 +85,34 @@ ImageLabel.Position = UDim2.new (0.274, 0,0.358, 0)
 ImageLabel.Size = UDim2.new (0, 106,0, 121)
 
 btnSex.MouseButton1Click:Connect(function() 
-	local player = tbxVictim.Text
+	local TargetPlayer: Player = Players:FindFirstChild(tbxVictim.Text)
+	local CurrentHumanoid = Players.LocalPlayer.Character:WaitForChild("Humanoid")
 
-	local stupid = Instance.new('Animation')
-	stupid.AnimationId = 'rbxassetid://148840371'
-
-	local hummy = game:GetService("Players").LocalPlayer.Character:WaitForChild("Humanoid")
-
-	pcall(function()
-		hummy.Parent.Pants:Destroy()
-	end)
-
-	pcall(function()
-		hummy.Parent.Shirt:Destroy()
-	end)
+	local BangAnimSrc = Instance.new('Animation')
+	BangAnimSrc.AnimationId = 'rbxassetid://148840371'
 	
-	local notfunny = hummy:LoadAnimation(stupid)
+	local BangAnimLoader = CurrentHumanoid:LoadAnimation(BangAnimSrc)
+	BangAnimLoader:Play()
+	BangAnimLoader:AdjustSpeed(15)
 
-	notfunny:Play()
-	notfunny:AdjustSpeed(15)
+	pcall(function()
+		CurrentHumanoid.Parent.Pants:Destroy()
+	end)
+	pcall(function()
+		CurrentHumanoid.Parent.Shirt:Destroy()
+	end)
 
-	while hummy.Parent.Parent ~= nil do
+	while CurrentHumanoid.Parent.Parent ~= nil do
 		wait()
 
-		local TargetCFrame: CFrame = game.Players[player].Character.HumanoidRootPart.CFrame
-		-- local CurCFrame: CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+		local TargetPlayerHead = TargetPlayer.Character:FindFirstChild("Head")
+		local TargetPlayerHRP = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
 		
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = TargetCFrame + Vector3.new(0, 0, 5)
+		Players.LocalPlayer.Character.HumanoidRootPart.CFrame = TargetPlayerHRP.CFrame + Vector3.new(0, 0, 0.7)
+	
+		local WeldConstraint = Instance.new("WeldConstraint")
+		WeldConstraint.Part0 = TargetPlayerHead
+		WeldConstraint.Part1 = Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+		WeldConstraint.Parent = TargetPlayerHead
 	end
 end)
