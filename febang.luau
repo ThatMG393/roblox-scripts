@@ -107,11 +107,11 @@ btnSex.MouseButton1Click:Connect(function()
 
 	-- Apply BodyPosition and BodyGyro to the local player's character
 	BodyPosition.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-	BodyPosition.Parent = CurrentHumanoid:WaitForChild("HumanoidRootPart")
+	BodyPosition.Parent = CurrentHumanoid
 
 	BodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
 	BodyGyro.CFrame = CFrame.new()
-	BodyGyro.Parent = CurrentHumanoid:WaitForChild("HumanoidRootPart")
+	BodyGyro.Parent = CurrentHumanoid
 
 	local TargetPlayerHumanoid = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
 	while CurrentHumanoid.Parent.Parent ~= nil do
