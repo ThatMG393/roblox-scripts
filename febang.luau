@@ -106,6 +106,10 @@ btnSex.MouseButton1Click:Connect(function()
 
 	while hummy.Parent.Parent ~= nil do
 		wait()
-		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players[player].Character.HumanoidRootPart.CFrame
+
+		local TargetCFrame: CFrame = game.Players[player].Character.HumanoidRootPart.CFrame
+		-- local CurCFrame: CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+		
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = TargetCFrame + Vector3.new(0, 0, 5)
 	end
 end)
