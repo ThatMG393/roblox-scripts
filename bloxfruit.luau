@@ -19,7 +19,7 @@ local MainWin = Fluent:CreateWindow({
 --------------------INFORMATION---------------------
 
 local InformationTab = MainWin:AddTab({
-	Title = "Information", Icon = ""
+	Title = "Information", Icon = "info"
 })
 
 local PlayersLabel = InformationTab:AddParagraph({
@@ -30,7 +30,7 @@ local PlayersLabel = InformationTab:AddParagraph({
 --------------------COMBAT--------------------
 
 local CombatTab = MainWin:AddTab({
-	Title = "Combat", Icon = ""
+	Title = "Combat", Icon = "swords"
 })
 
 local PlayerSection = CombatTab:AddSection("Player")
@@ -54,13 +54,7 @@ local PlayersDropdown = PlayerSection:AddDropdown("Dropdown", {
 	Default = 1
 })
 
-PlayersDropdown:OnChanged(function (selected)
-	Fluent:Notify({
-		Title = "Selected",
-		Content = selected,
-		Duration = 3
-	})
-
+PlayersDropdown:OnChanged(function (selected)	
 	if selected == "" then
 		SelectedPlayer = nil
 	else
@@ -75,48 +69,64 @@ PlayerSection:AddButton({
 	end 
 })
 
-RunService.Heartbeat:Connect(function()
-	if not UtilLib.IsNil(SelectedPlayer) then
-		for _, player in pairs(Players:GetPlayers()) do
-			if player ~= Players.LocalPlayer and player ~= SelectedPlayer then
-				local PlayerCharacter = player.Character
+local ESPSection = CombatTab:AddSection("ESP")
 
-				if PlayerCharacter then
-					if PlayerCharacter:FindFirstChildWhichIsA("Highlight") then
-						PlayerCharacter:FindFirstChildWhichIsA("Highlight"):Destroy()
-					end
-				end
-			end
-		end
+local function HighlightAPlayer(player: Player)
+	local PlayerCharacter = player.Character
 
-		local PlayerCharacter = SelectedPlayer.Character
-
-		if PlayerCharacter then
-			if PlayerCharacter:FindFirstChildWhichIsA("Highlight") then
-				PlayerCharacter:FindFirstChildWhichIsA("Highlight"):Destroy()
-			end
-
-			local Highlight = Instance.new("Highlight")
+	if PlayerCharacter then
+		if not PlayerCharacter:FindFirstChildWhichIsA("Highlight") then
+			local Highlight = Instance.new("Highlight")	
 			Highlight.FillColor = Color3.new(1, 0, 0)
 			Highlight.Parent = PlayerCharacter
 		end
-	else
-		for _, player in pairs(Players:GetPlayers()) do
-			if player ~= Players.LocalPlayer then
-				local PlayerCharacter = player.Character
+	end
+end
 
-				if PlayerCharacter then
-					if not PlayerCharacter:FindFirstChildWhichIsA("Highlight") then
-						local Highlight = Instance.new("Highlight")	
-						Highlight.FillColor = Color3.new(1, 0, 0)
-						Highlight.Parent = PlayerCharacter
-					end
+local function HighlightAllPlayers()
+	for _, player in pairs(Players:GetPlayers()) do
+		if player ~= Players.LocalPlayer then
+			HighlightAPlayer(player)
+		end
+	end
+end
+
+local function UnhighlightAllPlayers()
+	for _, player in pairs(Players:GetPlayers()) do
+		if player ~= Players.LocalPlayer then
+			local PlayerCharacter = player.Character
+
+			if PlayerCharacter then
+				local Highlight = PlayerCharacter:FindFirstChildWhichIsA("Highlight")
+				if Highlight then
+					Highlight:Destroy()
 				end
 			end
 		end
 	end
-end)
+end
 
+ESPSection:AddToggle({
+	Title = "ESP Players",
+	Callback = function (state)
+		if state then
+			HighlightAllPlayers()
+		else
+			UnhighlightAllPlayers()
+		end
+	end
+})
 
+ESPSection:AddToggle({
+	Title = "ESP Selected",
+	Callback = function (state)
+		if state then
+			UnhighlightAllPlayers()
+			if SelectedPlayer then HighlightAPlayer(SelectedPlayer) end
+		else
+			UnhighlightAllPlayers()
+		end
+	end
+})
 
 
