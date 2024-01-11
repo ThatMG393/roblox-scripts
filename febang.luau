@@ -86,7 +86,8 @@ ImageLabel.Size = UDim2.new (0, 106,0, 121)
 
 btnSex.MouseButton1Click:Connect(function() 
 	local TargetPlayer: Player = Players:FindFirstChild(tbxVictim.Text)
-	local CurrentHumanoid = Players.LocalPlayer.Character:WaitForChild("Humanoid")
+	local CurrentPlayer = Players.LocalPlayer
+	local CurrentHumanoid = CurrentPlayer.Character:WaitForChild("Humanoid")
 
 	local BangAnimSrc = Instance.new('Animation')
 	BangAnimSrc.AnimationId = 'rbxassetid://148840371'
@@ -113,16 +114,16 @@ btnSex.MouseButton1Click:Connect(function()
 	BodyGyro.CFrame = CFrame.new()
 	BodyGyro.Parent = CurrentHumanoid
 
-	local TargetPlayerHumanoid = TargetPlayer.Character.HumanoidRootPart
+	local TargetPlayerHRP = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
 	while CurrentHumanoid.Parent.Parent ~= nil do
 		wait()
 
-		if TargetPlayerHumanoid then
+		if TargetPlayerHRP then
 			local offset = Vector3.new(0, 0, -2)
-			local desiredPosition = TargetPlayerHumanoid.CFrame:PointToWorldSpace(offset)
+			local desiredPosition = TargetPlayerHRP.CFrame:PointToWorldSpace(offset)
 
-			BodyPosition.Position = desiredPosition
-			BodyGyro.CFrame = CFrame.new(BodyPosition.Position, TargetPlayerHumanoid.Position)    
+			CurrentPlayer.Character:SetPrimaryPartCFrame(CFrame.new(desiredPosition))
+			CurrentPlayer.Character:SetPrimaryPartCFrame(CurrentPlayer.Character:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(TargetPlayerHRP.Rotation.Y), 0))		        
 		end
 	end
 end)
