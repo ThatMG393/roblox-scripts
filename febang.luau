@@ -102,26 +102,27 @@ btnSex.MouseButton1Click:Connect(function()
 		CurrentHumanoid.Parent.Shirt:Destroy()
 	end)
 
+	local BodyPosition = Instance.new("BodyPosition")
+	local BodyGyro = Instance.new("BodyGyro")
+
+	-- Apply BodyPosition and BodyGyro to the local player's character
+	BodyPosition.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+	BodyPosition.Parent = CurrentHumanoid:WaitForChild("HumanoidRootPart")
+
+	BodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+	BodyGyro.CFrame = CFrame.new()
+	BodyGyro.Parent = CurrentHumanoid:WaitForChild("HumanoidRootPart")
+
+	local TargetPlayerHumanoid = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
 	while CurrentHumanoid.Parent.Parent ~= nil do
 		wait()
 
-		local TargetPlayerHead = TargetPlayer.Character:FindFirstChild("Head")
-		local TargetPlayerHRP = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
-		
+		if TargetPlayerHumanoid then
+			local offset = Vector3.new(0, 0, -2)
+			local desiredPosition = TargetPlayerHumanoid.CFrame:PointToWorldSpace(offset)
 
-		local CurrentHRP = Players.LocalPlayer.Character.HumanoidRootPart
-
-		CurrentHRP.CFrame = CFrame.new(
-			(
-				CurrentHRP.Position
-			):Lerp(
-				TargetPlayerHRP.Position, 0.1
-			)
-		)
-	
-		local WeldConstraint = Instance.new("WeldConstraint")
-		WeldConstraint.Part0 = TargetPlayerHead
-		WeldConstraint.Part1 = Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-		WeldConstraint.Parent = WeldConstraint.Part0
+			BodyPosition.Position = desiredPosition
+			BodyGyro.CFrame = CFrame.new(BodyPosition.Position, TargetPlayerHumanoid.Position)    
+		end
 	end
 end)
