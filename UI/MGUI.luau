@@ -47,7 +47,7 @@ function MGUI.CreateWindow(opts)
 	Toolbar.Parent = ContainerFrame
 	Toolbar.BackgroundColor3 = ParsedOption.Theme.AboveBackground
 	Toolbar.Position = UDim2.fromScale(0.015, -0.002)
-	Toolbar.Size = UDim2.fromOffset(323, 64)
+	Toolbar.Size = UDim2.fromOffset(323, 99)
 
 	SidePanel.Parent = ContainerFrame
 	SidePanel.Position = UDim2.fromScale(0.015, -0.002)
