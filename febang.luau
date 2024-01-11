@@ -2,13 +2,11 @@ local MakeDraggable = loadstring(game:HttpGet("https://raw.githubusercontent.com
 
 local SimpleSexGUI = Instance.new("ScreenGui") 
 local FGUI = Instance.new("Frame")
-local btnNaked = Instance.new("TextButton")
 local btnSex = Instance.new("TextButton")
 local tbxVictim = Instance.new("TextBox")
 local lblFUCKEMALL = Instance.new("TextLabel")
 local ImageLabel = Instance.new("ImageLabel")
 local lbltitle = Instance.new("TextLabel")
-local TextLabel = Instance.new("TextLabel")
 
 SimpleSexGUI.Name = "SimpleSexGUI"
 SimpleSexGUI.Parent = game.CoreGui
@@ -17,7 +15,7 @@ FGUI.Name = "FGUI"
 FGUI.Parent = SimpleSexGUI
 FGUI.BackgroundColor3 = Color3.new(255,255,255)
 FGUI.BorderSizePixel = 1
-FGUI.Position = UDim2.new(0,0, 0.667, 0)
+FGUI.Position = UDim2.new(0.2, 0, 0.5, 0)
 FGUI.Size = UDim2.new(0,317, 0,271)
 MakeDraggable.MakeDraggable(FGUI)
 
@@ -30,7 +28,7 @@ lbltitle.Size = UDim2.new (0, 317,0, 33)
 lbltitle.Visible = true
 lbltitle.Active = true
 lbltitle.Draggable = false
-lbltitle.Selectable = true
+lbltitle.Selectable = false
 lbltitle.Font = Enum.Font.SourceSansBold
 lbltitle.Text = "A Simple Fuck(ing) GUI!!"
 lbltitle.TextColor3 = Color3.new(0, 0, 0)
