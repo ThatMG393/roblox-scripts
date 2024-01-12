@@ -8,7 +8,6 @@ local TargetTextLabel = Instance.new("TextLabel")
 local TargetVictimInput = Instance.new("TextBox")
 local StartAnim = Instance.new("TextButton")
 local BottomTextLabel = Instance.new("TextLabel")
-local ImageLabel = Instance.new("ImageLabel")
 
 SimpleSexGUI.Name = "SimpleSexGUI"
 SimpleSexGUI.Parent = game:GetService("CoreGui")
@@ -17,11 +16,10 @@ FGUI.Name = "FGUI"
 FGUI.Parent = SimpleSexGUI
 FGUI.BackgroundColor3 = Color3.new(255,255,255)
 FGUI.BorderSizePixel = 1
-FGUI.Position = UDim2.new(0.2, 0, 0.5, 0)
+FGUI.Position = UDim2.new(0.2, 0, 0.3, 0)
 FGUI.Size = UDim2.new(0,317, 0,271)
 MakeDraggable.MakeDraggable(FGUI)
 
-Title.Name = "Title"
 Title.Parent = FGUI
 Title.BackgroundColor3 = Color3.new(255,255,255)
 Title.BorderSizePixel = 1
@@ -39,7 +37,7 @@ Title.TextSize = 20
 TargetTextLabel.Parent = FGUI
 TargetTextLabel.BackgroundColor3 = Color3.new(255, 255, 255)
 TargetTextLabel.BorderSizePixel = 1
-TargetTextLabel.Position = UDim2.new (0.198, 0, 0.18, 0)
+TargetTextLabel.Position = UDim2.new (0.10, 0, 0.18, 0)
 TargetTextLabel.Size = UDim2.new (0, 99, 0, 31)
 TargetTextLabel.Visible = true
 TargetTextLabel.Active = true
@@ -53,7 +51,7 @@ TargetTextLabel.TextSize = 15
 TargetVictimInput.Parent = FGUI
 TargetVictimInput.BackgroundColor3 = Color3.new(255, 255, 255)
 TargetVictimInput.BorderSizePixel = 1
-TargetVictimInput.Position = UDim2.new (0.598, 0, 0.18, 0)
+TargetVictimInput.Position = UDim2.new (0.45, 0, 0.18, 0)
 TargetVictimInput.Size = UDim2.new (0, 133, 0, 27)
 TargetVictimInput.Visible = true
 TargetVictimInput.Active = true
@@ -90,13 +88,6 @@ BottomTextLabel.Text = "FUCK AND FUCK"
 BottomTextLabel.TextColor3 = Color3.new(0, 0, 0)
 BottomTextLabel.TextSize = 20
  
-ImageLabel.Name = "ImageLabel"
-ImageLabel.Parent = FGUI
-ImageLabel.Image = "http://www.roblox.com/asset/?id=4283774086"
-ImageLabel.BorderSizePixel = 1
-ImageLabel.Position = UDim2.new (0.274, 0,0.358, 0)
-ImageLabel.Size = UDim2.new (0, 106,0, 121)
-
 StartAnim.MouseButton1Click:Connect(function() 
 	local TargetPlayer: Player = Players:FindFirstChild(TargetVictimInput.Text)
 	local TargetPlayerHRP = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
