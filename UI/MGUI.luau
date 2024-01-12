@@ -1,4 +1,6 @@
 local MGUI = { }
+local MakeDraggable = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))()
+
 MGUI.Themes = {
 	["Dark"] = {
 		Primary = Color3.new(0, 0, 1),
@@ -28,6 +30,8 @@ function MGUI.CreateWindow(opts)
 	local MainFrame = Instance.new("Frame")
 	local Toolbar = Instance.new("Frame")
 	local SidePanel = Instance.new("Frame")
+
+	MakeDraggable.MakeDraggable(ContainerFrame)
 
 	mGuI.Parent = game:GetService("CoreGui")
 	mGuI.ResetOnSpawn = false
