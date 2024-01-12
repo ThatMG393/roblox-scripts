@@ -86,8 +86,10 @@ ImageLabel.Size = UDim2.new (0, 106,0, 121)
 
 btnSex.MouseButton1Click:Connect(function() 
 	local TargetPlayer: Player = Players:FindFirstChild(tbxVictim.Text)
+	local TargetPlayerHRP = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
 	local CurrentPlayer = Players.LocalPlayer
 	local CurrentHumanoid = CurrentPlayer.Character:WaitForChild("Humanoid")
+	local CurrentHRP = CurrentPlayer.Character:FindFirstChild("HumanoidRootPart")
 
 	local BangAnimSrc = Instance.new('Animation')
 	BangAnimSrc.AnimationId = 'rbxassetid://148840371'
@@ -103,27 +105,9 @@ btnSex.MouseButton1Click:Connect(function()
 		CurrentHumanoid.Parent.Shirt:Destroy()
 	end)
 
-	local BodyPosition = Instance.new("BodyPosition")
-	local BodyGyro = Instance.new("BodyGyro")
-
-	-- Apply BodyPosition and BodyGyro to the local player's character
-	BodyPosition.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-	BodyPosition.Parent = CurrentHumanoid
-
-	BodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-	BodyGyro.CFrame = CFrame.new()
-	BodyGyro.Parent = CurrentHumanoid
-
-	local TargetPlayerHRP = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
 	while CurrentHumanoid.Parent.Parent ~= nil do
 		wait()
-
-		if TargetPlayerHRP then
-			local offset = Vector3.new(0, 0, 1)
-			local desiredPosition = TargetPlayerHRP.CFrame:PointToWorldSpace(offset)
-
-			CurrentPlayer.Character:SetPrimaryPartCFrame(CFrame.new(desiredPosition))
-			CurrentPlayer.Character:SetPrimaryPartCFrame(CurrentPlayer.Character:GetPrimaryPartCFrame() * CFrame.Angles(0, math.rad(TargetPlayerHRP.Rotation.Y), 0))		        
-		end
+		local pos = TargetPlayerHRP.Position + TargetPlayerHRP.CFrame.LookVector * -1
+		CurrentHRP.CFrame = CFrame.new(pos, TargetPlayerHRP.Position)
 	end
 end)
