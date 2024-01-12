@@ -35,7 +35,8 @@ function MGUI.CreateWindow(opts)
 	mGuI.Name = opts.Name or "mGuI"
 
 	ContainerFrame.Parent = mGuI
-	ContainerFrame.Size = UDim2.fromOffset(opts.SizeX, opts.SizeY)
+	ContainerFrame.Position = UDim2.fromScale(260, 230)
+	ContainerFrame.Size = UDim2.fromOffset(opts.SizeX or 1, opts.SizeY or 1)
 	ContainerFrame.BackgroundTransparency = 1
 
 	MainFrame.Parent = ContainerFrame
