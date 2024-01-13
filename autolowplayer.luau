@@ -1,8 +1,8 @@
-local ServersAmount = 25 -- 10, 25, 50, 100
+local ServersAmount = _G.ServersAmount or 25 -- 10, 25, 50, 100
 local PlaceServers = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=" .. ServersAmount
-local PingRequire = 300 -- ~100ms
-local PingRequireDiff = 60
-local PlayerMax = 3
+local PingRequire = _G.PingRequire or 300 -- ~100ms
+local PingRequireDiff = _G.PingRequireDiff or 60
+local PlayerMax = _G.PlayerMax or 3
 
 function ShowNotif(opts, callback)
     local Bindable = Instance.new("BindableFunction")
