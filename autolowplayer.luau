@@ -13,7 +13,7 @@ function ShowNotif(opts, callback)
 end
 
 function ListServers(cursor)
-   local Response = game:GetHttp(PlaceServers .. ((cursor and "&cursor=" .. cursor) or ""))
+   local Response = game:HttpGet(PlaceServers .. ((cursor and "&cursor=" .. cursor) or ""))
    return game:GetService("HttpService"):JSONDecode(Response)
 end
 
