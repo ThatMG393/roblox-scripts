@@ -4,13 +4,13 @@ local ServersAmount = _G.ServersAmount or 25 -- 10, 25, 50, 100
 local PlaceServers = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=" .. ServersAmount
 local PingRequire = _G.PingRequire or 360
 local PingRequireDiff = _G.PingRequireDiff or 60
-local PlayerMinMax = _G.PlayerMax or { 3, 3 }
+local PlayerMinMax = _G.PlayerMinMax or { 3, 5 }
 
 function ShowNotif(opts, callback)
     local Bindable = Instance.new("BindableFunction")
-    Bindable.OnInvoke = callback
+    Bindable.OnInvoke = callback or function (a) end
     opts.Callback = Bindable
-
+	
     return game:GetService("StarterGui"):SetCore("SendNotification", opts)
 end
 
@@ -19,14 +19,15 @@ function ListServers(cursor)
    return HttpService:JSONDecode(Response)
 end
 
-function FindServerMeetsRequire(noGiveUp, nextPage, debug)
+function FindServerMeetsRequire(noGiveUp, debug, nextPage)
 	debug = _G.debug_server or debug or false
 	ShowNotif({
 		Title = "Searching for servers...",
+		Text = "Sit back & chillax",
 		Duration = 5
 	})
 
-    local Servers = ListServers(nextPage)
+	local Servers = ListServers(nextPage)
 
 	local minPingRequire = math.clamp(PingRequire - PingRequireDiff, 10, 9999)
 	local maxPingRequire = PingRequire + PingRequireDiff
@@ -52,18 +53,18 @@ function FindServerMeetsRequire(noGiveUp, nextPage, debug)
 		end
     end
 	
-    if noGiveUp then
-		return FindServerMeetsRequire(noGiveUp, Servers.nextPageCursor, debug)
+	if noGiveUp then
+		return FindServerMeetsRequire(noGiveUp, debug, Servers.nextPageCursor)
 	else
-    	return nil
+		return nil
 	end
 end
 
 
 function Main()
-    local FoundServer = FindServerMeetsRequire(true, false)
+    local Success, FoundServer = pcall(FindServerMeetsRequire, true, false)
     
-    if FoundServer then
+    if Success and FoundServer then
         ShowNotif({
             Title = "Found Server!",
             Text = "Ping: " .. FoundServer.ping .. ", Players: " .. FoundServer.playing,
@@ -77,7 +78,16 @@ function Main()
                 Main()
             end
         end)
-    end
+	else
+		ShowNotif({
+			Title = "Cannot find any server :(",
+			Text = "",
+			Duration = 5,
+			Button1 = "Again"
+		}, function (answer)
+			Main()
+		end)
+	end
 end
 
 Main()
