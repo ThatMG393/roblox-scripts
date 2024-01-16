@@ -2,7 +2,7 @@ local HttpService = game:GetService("HttpService")
 
 local ServersAmount = _G.ServersAmount or 25 -- 10, 25, 50, 100
 local PlaceServers = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=" .. ServersAmount
-local PingRequire = _G.PingRequire or 360
+local PingRequire = _G.PingRequire or 390
 local PingRequireDiff = _G.PingRequireDiff or 60
 local PlayerMinMax = _G.PlayerMinMax or { 3, 5 }
 
@@ -21,12 +21,6 @@ end
 
 function FindServerMeetsRequire(noGiveUp, debug, nextPage)
 	debug = _G.debug_server or debug or false
-	ShowNotif({
-		Title = "Searching for servers...",
-		Text = "Sit back & chillax",
-		Duration = 5
-	})
-
 	local Servers = ListServers(nextPage)
 
 	local minPingRequire = math.clamp(PingRequire - PingRequireDiff, 10, 9999)
@@ -62,6 +56,12 @@ end
 
 
 function Main()
+	ShowNotif({
+		Title = "Searching for servers...",
+		Text = "Sit back & chillax",
+		Duration = 5
+	})
+
     local Success, FoundServer = pcall(FindServerMeetsRequire, true, false)
     
     if Success and FoundServer then
