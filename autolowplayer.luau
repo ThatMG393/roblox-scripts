@@ -6,6 +6,8 @@ local PingRequire = _G.PingRequire or 390
 local PingRequireDiff = _G.PingRequireDiff or 60
 local PlayerMinMax = _G.PlayerMinMax or { 3, 5 }
 
+print(PlaceSevers)
+
 function ShowNotif(opts, callback)
     local Bindable = Instance.new("BindableFunction")
     Bindable.OnInvoke = callback or function (a) end
