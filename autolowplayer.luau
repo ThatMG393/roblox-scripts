@@ -64,7 +64,7 @@ function Main()
 
     local Success, FoundServer = pcall(FindServerMeetsRequire, true, false)
     
-    if Success and FoundServer then
+    if FoundServer then
         ShowNotif({
             Title = "Found Server!",
             Text = "Ping: " .. FoundServer.ping .. ", Players: " .. FoundServer.playing,
