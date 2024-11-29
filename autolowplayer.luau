@@ -66,8 +66,8 @@ function Main()
 	})
 
     local Success, FoundServer = pcall(FindServerMeetsRequire, true, false)
-    ShowNotif({ Title = "Hh", Text = "S " .. Success .. " FS " .. FoundServer, Duration = 50 })
-    
+    print(Success)
+print(FoundServer)
 if FoundServer then
         ShowNotif({
             Title = "Found Server!",
