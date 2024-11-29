@@ -1,6 +1,6 @@
 local HttpService = game:GetService("HttpService")
 
-local ServersAmount = _G.ServersAmount or 25 -- 10, 25, 50, 100
+local ServersAmount = _G.ServersAmount or 100 -- 10, 25, 50, 100
 local PlaceServers = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=" .. ServersAmount
 local PingRequire = _G.PingRequire or 390
 local PingRequireDiff = _G.PingRequireDiff or 60
