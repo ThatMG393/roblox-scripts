@@ -22,6 +22,7 @@ function ListServers(cursor)
 end
 
 function FindServerMeetsRequire(noGiveUp, debug, nextPage)
+        noGiveUp = true
 	debug = _G.debug_server or debug or false
 	local Servers = ListServers(nextPage)
 
