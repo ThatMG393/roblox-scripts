@@ -16,7 +16,7 @@ function ServerHopper:FindServer(minPlayer, maxPlayer, minPing, maxPing)
 			SERVERS_PER_PAGE,
 			cursor and "&cursor=" .. cursor or ""
 		)
-		return HttpService:JSONDecode(HttpService:GetAsync(url))
+		return HttpService:JSONDecode(game:HttpGet(url))
 	end
 	
 	local function FilterServers()
@@ -169,7 +169,7 @@ function ServerHopper:InitUI()
     local SearchButton = createButton("SearchButton", "Search", UDim2.new(0.05, 0, 0.85, 0))
 	local TeleportButton = createButton("TeleportButton", "Teleport", UDim2.new(0.55, 0, 0.55, 0))
    
-	local MakeDraggable = loadstring(HttpService:GetAsync("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))
+	local MakeDraggable = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))
 	MakeDraggable(MainFrame)
     
     return {
