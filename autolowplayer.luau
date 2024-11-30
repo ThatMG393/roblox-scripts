@@ -181,11 +181,12 @@ function ServerHopper:InitUI()
         ButtonCorner.CornerRadius = UDim.new(0, 6)
         ButtonCorner.Parent = Button
         
-        function Button:SetDisabled(disabled)
-            self.BackgroundColor3 = disabled and Color3.fromRGB(100, 100, 100) or Color3.fromRGB(0, 122, 255)
+        local M = { UI = Button }
+        function M:SetDisabled(disabled)
+            self.UI.BackgroundColor3 = disabled and Color3.fromRGB(100, 100, 100) or Color3.fromRGB(0, 122, 255)
         end
         
-        return Button
+        return M
     end
     
     local SearchButton = createButton("SearchButton", "Search", UDim2.new(0.05, 0, 0.82, 0))
@@ -263,12 +264,12 @@ function ServerHopper:HandleUI()
         return true
     end
     
-    ui.searchButton.MouseButton1Click:Connect(function()
+    ui.searchButton.UI.MouseButton1Click:Connect(function()
         if not validateInputs() then return end
         if searching then return end
         searching = true
 
-        ui.searchButton.Text = "..."
+        ui.searchButton.UI.Text = "..."
         ui.searchButton:SetDisabled(true)
         ui.teleportButton:SetDisabled(true)
         updateStatus("Searching for server...", false)
@@ -281,7 +282,7 @@ function ServerHopper:HandleUI()
         )
 
         searching = false
-        ui.searchButton.Text = "Retry"
+        ui.searchButton.UI.Text = "Retry"
         ui.searchButton:SetDisabled(false)
 
         if result.serverInfo ~= nil then
@@ -294,7 +295,7 @@ function ServerHopper:HandleUI()
         end
     end)
 
-    ui.teleportButton.MouseButton1Click:Connect(function()
+    ui.teleportButton.UI.MouseButton1Click:Connect(function()
         if searching then return end
         if foundServer == nil then return end
         TeleportService:TeleportToPlaceInstance(game.PlaceId, foundServer.id, Players.LocalPlayer)
