@@ -2,7 +2,7 @@ local M = { }
 
 local UserInputService = game:GetService("UserInputService")
 
-function M:MakeDraggable(gui: GuiObject)
+function M:MakeDraggableFrom(inputRecv: GuiObject, guiToMove: GuiObject)
 	local dragging
 	local dragInput
 	local dragStart
@@ -10,14 +10,14 @@ function M:MakeDraggable(gui: GuiObject)
 
 	local function update(input)
 		local delta = input.Position - dragStart
-		gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		guiToMove.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 	end
 
-	gui.InputBegan:Connect(function(input)
+	inputRecv.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			dragging = true
 			dragStart = input.Position
-			startPos = gui.Position
+			startPos = guiToMove.Position
 			
 			input.Changed:Connect(function()
 				if input.UserInputState == Enum.UserInputState.End then
@@ -27,7 +27,7 @@ function M:MakeDraggable(gui: GuiObject)
 		end
 	end)
 
-	gui.InputChanged:Connect(function(input)
+	inputRecv.InputChanged:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 			dragInput = input
 		end
@@ -38,6 +38,11 @@ function M:MakeDraggable(gui: GuiObject)
 			update(input)
 		end
 	end)
+end
+
+
+function M:MakeDraggable(gui: GuiObject)
+	self.MakeDraggableFrom(gui, gui)
 end
 
 return M
