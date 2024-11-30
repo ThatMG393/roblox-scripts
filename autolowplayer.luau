@@ -9,41 +9,37 @@ local SERVERS_PER_PAGE = 100
 local MAX_PAGES = 10
 
 function ServerHopper:FindServer(minPlayer, maxPlayer, minPing, maxPing)
-	local function GetServersAPI(cursor)
-		local url = string.format(
-			"https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=%d%s",
-			game.PlaceId,
-			SERVERS_PER_PAGE,
-			cursor and "&cursor=" .. cursor or ""
-		)
-		return HttpService:JSONDecode(game:HttpGet(url))
-	end
-	
-	local function FilterServers()
-		local function FilterServersInternal(servers)
-			for _, server in ipairs(servers) do
-				if server.playing >= minPlayer and server.playing <= maxPlayer
-				and server.ping >= minPing and server.ping <= maxPing then
-					return { serverInfo = server }
-				end
-			end
+    local function GetServersAPI(cursor)
+        local url = string.format(
+            "https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=%d%s",
+            game.PlaceId,
+            SERVERS_PER_PAGE,
+            cursor and "&cursor=" .. cursor or ""
+        )
+        return HttpService:JSONDecode(game:HttpGet(url))
+    end
+    
+    local function FilterServers()
+        local function FilterServersInternal(servers)
+            for _, server in ipairs(servers) do
+                if server.playing >= minPlayer and server.playing <= maxPlayer
+                and server.ping >= minPing and server.ping <= maxPing then
+                    return { serverInfo = server }
+                end
+            end
+            return { serverInfo = nil }
+        end
 
-			return { serverInfo = nil }
-		end
-
-		local servers = GetServersAPI()
-		
-		for i = 0, MAX_PAGES do
-			local server = FilterServersInternal(servers)
-			if server.serverInfo ~= nil then return server end
-
-			servers = GetServersAPI(servers.nextPageCursor)
-		end
-
-		return { serverInfo = nil }
-	end
-
-	return FilterServers()
+        local servers = GetServersAPI()
+        
+        for i = 0, MAX_PAGES do
+            local server = FilterServersInternal(servers)
+            if server.serverInfo ~= nil then return server end
+            servers = GetServersAPI(servers.nextPageCursor)
+        end
+        return { serverInfo = nil }
+    end
+    return FilterServers()
 end
 
 function ServerHopper:InitUI()
@@ -51,13 +47,21 @@ function ServerHopper:InitUI()
     ScreenGui.Name = "ServerHopperUI"
     ScreenGui.ResetOnSpawn = false
     
+    local Container = Instance.new("Frame")
+    Container.Name = "Container"
+    Container.AnchorPoint = Vector2.new(0.5, 0.5)
+    Container.Position = UDim2.new(0.5, 0, 0.5, 0)
+    Container.Size = UDim2.new(0.3, 0, 0.5, 0)
+    Container.BackgroundTransparency = 1
+    Container.Parent = ScreenGui
+    
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
-    MainFrame.Size = UDim2.new(0, 300, 0, 400)
-    MainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
+    MainFrame.Size = UDim2.new(1, 0, 1, 0)
+    MainFrame.Position = UDim2.new(0, 0, 0, 0)
     MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
     MainFrame.BorderSizePixel = 0
-    MainFrame.Parent = ScreenGui
+    MainFrame.Parent = Container
     
     local UICorner = Instance.new("UICorner")
     UICorner.CornerRadius = UDim.new(0, 8)
@@ -65,7 +69,7 @@ function ServerHopper:InitUI()
     
     local Title = Instance.new("TextLabel")
     Title.Name = "Title"
-    Title.Size = UDim2.new(1, 0, 0, 50)
+    Title.Size = UDim2.new(1, 0, 0.1, 0)
     Title.Position = UDim2.new(0, 0, 0, 0)
     Title.BackgroundTransparency = 1
     Title.Text = "Server Hopper"
@@ -77,25 +81,25 @@ function ServerHopper:InitUI()
     local function createInputGroup(name, placeholder, yPosition)
         local GroupFrame = Instance.new("Frame")
         GroupFrame.Name = name .. "Group"
-        GroupFrame.Size = UDim2.new(0.9, 0, 0, 70)
-        GroupFrame.Position = UDim2.new(0.05, 0, 0, yPosition)
+        GroupFrame.Size = UDim2.new(0.9, 0, 0.15, 0)
+        GroupFrame.Position = UDim2.new(0.05, 0, yPosition, 0)
         GroupFrame.BackgroundTransparency = 1
         GroupFrame.Parent = MainFrame
         
         local Label = Instance.new("TextLabel")
-        Label.Size = UDim2.new(1, 0, 0, 20)
+        Label.Size = UDim2.new(1, 0, 0.3, 0)
         Label.Position = UDim2.new(0, 0, 0, 0)
         Label.BackgroundTransparency = 1
         Label.Text = name
         Label.TextColor3 = Color3.fromRGB(200, 200, 200)
-        Label.TextSize = 14
+        Label.TextSize = 16
         Label.TextXAlignment = Enum.TextXAlignment.Left
         Label.Font = Enum.Font.Gotham
         Label.Parent = GroupFrame
         
         local InputFrame = Instance.new("Frame")
-        InputFrame.Size = UDim2.new(1, 0, 0, 40)
-        InputFrame.Position = UDim2.new(0, 0, 0, 25)
+        InputFrame.Size = UDim2.new(1, 0, 0.6, 0)
+        InputFrame.Position = UDim2.new(0, 0, 0.35, 0)
         InputFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
         InputFrame.Parent = GroupFrame
         
@@ -108,42 +112,44 @@ function ServerHopper:InitUI()
         TextBox.Size = UDim2.new(0.9, 0, 1, 0)
         TextBox.Position = UDim2.new(0.05, 0, 0, 0)
         TextBox.BackgroundTransparency = 1
-        TextBox.Text = ""
+        TextBox.Text = placeholder
         TextBox.PlaceholderText = placeholder
         TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
         TextBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
-        TextBox.TextSize = 14
+        TextBox.TextSize = 18
         TextBox.Font = Enum.Font.Gotham
         TextBox.Parent = InputFrame
         
         return TextBox
     end
     
-    local MinPlayersInput = createInputGroup("Min Players", "3", 60)
-    local MaxPlayersInput = createInputGroup("Max Players", "5", 140)
-    local MinPingInput = createInputGroup("Min Ping", "300", 220)
-    local MaxPingInput = createInputGroup("Max Ping", "400", 300)
+    local MinPlayersInput = createInputGroup("Min Players", "3", 0.12)
+    local MaxPlayersInput = createInputGroup("Max Players", "5", 0.29)
+    local MinPingInput = createInputGroup("Min Ping", "300", 0.46)
+    local MaxPingInput = createInputGroup("Max Ping", "400", 0.63)
     
     local StatusLabel = Instance.new("TextLabel")
     StatusLabel.Name = "StatusLabel"
-    StatusLabel.Size = UDim2.new(0.9, 0, 0, 20)
-    StatusLabel.Position = UDim2.new(0.05, 0, 0, 370)
+    StatusLabel.Size = UDim2.new(0.9, 0, 0.07, 0)
+    StatusLabel.Position = UDim2.new(0.05, 0, 0.8, 0)
     StatusLabel.BackgroundTransparency = 1
     StatusLabel.Text = ""
     StatusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    StatusLabel.TextSize = 14
+    StatusLabel.TextSize = 16
     StatusLabel.Font = Enum.Font.Gotham
     StatusLabel.Parent = MainFrame
     
     local function createButton(name, text, position)
+        local disabled = false
+        
         local Button = Instance.new("TextButton")
         Button.Name = name
-        Button.Size = UDim2.new(0.4, 0, 0, 40)
+        Button.Size = UDim2.new(0.4, 0, 0.08, 0)
         Button.Position = position
         Button.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
         Button.Text = text
         Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Button.TextSize = 14
+        Button.TextSize = 18
         Button.Font = Enum.Font.GothamBold
         Button.Parent = MainFrame
         
@@ -152,25 +158,46 @@ function ServerHopper:InitUI()
         ButtonCorner.Parent = Button
         
         Button.MouseEnter:Connect(function()
-            TweenService:Create(Button, TweenInfo.new(0.2), {
-                BackgroundColor3 = Color3.fromRGB(0, 100, 210)
-            }):Play()
+            if not disabled then
+                TweenService:Create(Button, TweenInfo.new(0.2), {
+                    BackgroundColor3 = Color3.fromRGB(0, 100, 210)
+                }):Play()
+            end
         end)
         
         Button.MouseLeave:Connect(function()
-            TweenService:Create(Button, TweenInfo.new(0.2), {
-                BackgroundColor3 = Color3.fromRGB(0, 122, 255)
-            }):Play()
+            if not disabled then
+                TweenService:Create(Button, TweenInfo.new(0.2), {
+                    BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+                }):Play()
+            end
         end)
         
-        return Button
+        local b = { b = Button }
+        function b:SetDisabled(d) disabled = d end
+        
+        return b
     end
     
-    local SearchButton = createButton("SearchButton", "Search", UDim2.new(0.05, 0, 0.85, 0))
-	local TeleportButton = createButton("TeleportButton", "Teleport", UDim2.new(0.55, 0, 0.55, 0))
-   
-	local MakeDraggable = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))
-	MakeDraggable(MainFrame)
+    local SearchButton = createButton("SearchButton", "Search", UDim2.new(0.05, 0, 0.89, 0))
+    local TeleportButton = createButton("TeleportButton", "Teleport", UDim2.new(0.55, 0, 0.89, 0))
+    TeleportButton.b.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    TeleportButton:SetDisabled(true)
+    
+    local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
+    UIAspectRatioConstraint.AspectRatio = 0.66
+    UIAspectRatioConstraint.Parent = MainFrame
+    
+    local UISizeConstraint = Instance.new("UISizeConstraint")
+    UISizeConstraint.MinSize = Vector2.new(200, 300)
+    UISizeConstraint.MaxSize = Vector2.new(400, 600)
+    UISizeConstraint.Parent = Container
+    
+    local MakeDraggable = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))()
+    MakeDraggable:MakeDraggable(MainFrame)
+
+	local TextResizer = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/TextResizer.luau"))()
+	TextResizer:AutoResizeTexts(MainFrame)
     
     return {
         gui = ScreenGui,
@@ -179,24 +206,21 @@ function ServerHopper:InitUI()
         minPingInput = MinPingInput,
         maxPingInput = MaxPingInput,
         searchButton = SearchButton,
-		teleportButton = TeleportButton,
+        teleportButton = TeleportButton,
         statusLabel = StatusLabel
     }
 end
 
--- Create and handle the UI
 function ServerHopper:HandleUI()
     local ui = ServerHopper:InitUI() 
-	local foundServer = nil
+    local foundServer = nil
     local searching = false
     
-    -- Function to update status
     local function updateStatus(message, isError)
         ui.statusLabel.Text = message
         ui.statusLabel.TextColor3 = isError and Color3.fromRGB(255, 100, 100) or Color3.fromRGB(200, 200, 200)
     end
     
-    -- Function to validate inputs
     local function validateInputs()
         local minPlayers = tonumber(ui.minPlayersInput.Text)
         local maxPlayers = tonumber(ui.maxPlayersInput.Text)
@@ -221,46 +245,53 @@ function ServerHopper:HandleUI()
         return true
     end
     
-    ui.searchButton.MouseButton1Click:Connect(function()
+    ui.searchButton.b.MouseButton1Click:Connect(function()
         if not validateInputs() then return end
         if searching then return end
         searching = true
 
-		ui.searchButton.Text = "..."
-        ui.searchButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-		ui.teleportButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        ui.searchButton.b.Text = "..."
+        ui.searchButton.b.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        ui.searchButton:SetDisabled(true)
+
+        ui.teleportButton.b.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        ui.teleportButton:SetDisabled(true)
 
         updateStatus("Searching for server...", false)
 
-		local result = ServerHopper:FindServer(
-			tonumber(ui.minPlayersInput.Text),
-			tonumber(ui.maxPlayersInput.Text),
-			tonumber(ui.minPingInput.Text),
-			tonumber(ui.maxPingInput.Text)
-		)
+        local result = ServerHopper:FindServer(
+            tonumber(ui.minPlayersInput.Text),
+            tonumber(ui.maxPlayersInput.Text),
+            tonumber(ui.minPingInput.Text),
+            tonumber(ui.maxPingInput.Text)
+        )
 
-		searching = false
+        searching = false
 
-		ui.searchButton.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
-		ui.teleportButton.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
-		ui.searchButton.Text = "Retry"
+        ui.searchButton.b.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+        ui.searchButton.b.Text = "Retry"
+        ui.searchButton:SetDisabled(false)
 
-		if result.serverInfo ~= nil then
-			foundServer = result.serverInfo
-			updateStatus("Found server! Ping: " .. foundServer.ping .. ", Players: " .. foundServer.playing)
-		else
-			updateStatus("Failed to find a server", true)
-		end
+        if result.serverInfo ~= nil then
+            foundServer = result.serverInfo
+            updateStatus("Found server! Ping: " .. foundServer.ping .. ", Players: " .. foundServer.playing)
+            ui.teleportButton.b.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+            ui.teleportButton:SetDisabled(false)
+        else
+            updateStatus("Failed to find a server", true)
+            ui.teleportButton.b.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+            ui.teleportButton:SetDisabled(true)
+        end
     end)
 
-	ui.teleportButton.MouseButton1Click:Connect(function()
-		if searching then return end
-		if foundServer ~= nil then return end
+    ui.teleportButton.b.MouseButton1Click:Connect(function()
+        if searching then return end
+        if foundServer == nil then return end
 
-		TeleportService:TeleportToPlaceInstance(
-			game.PlaceId, foundServer.id, Players.LocalPlayer
-		)
-	end)
+        TeleportService:TeleportToPlaceInstance(
+            game.PlaceId, foundServer.id, Players.LocalPlayer
+        )
+    end)
     
     ui.gui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
 end

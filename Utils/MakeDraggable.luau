@@ -2,7 +2,7 @@ local M = { }
 
 local UserInputService = game:GetService("UserInputService")
 
-function M.MakeDraggable(gui: GuiObject)
+function M:MakeDraggable(gui: GuiObject)
 	local dragging
 	local dragInput
 	local dragStart
