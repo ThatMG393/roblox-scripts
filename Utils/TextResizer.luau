@@ -5,7 +5,7 @@ function M:AutoResizeTexts(element: Instance)
 
 	for _, container in element:GetChildren() do
 		if not container:IsA('TextLabel') then
-			M:AutoResizeTexts(container)
+			continue
 		end
 
 		local isDoneCalculatingTextBounds = container.TextBounds ~= Vector2.zero
@@ -22,7 +22,7 @@ function M:AutoResizeTexts(element: Instance)
 
 	for _, child in element:GetChildren() do
 		if not child:IsA('TextLabel') then
-			M:AutoResizeTexts(child)
+			continue
 		end
 
 		local function handleChildChanged()

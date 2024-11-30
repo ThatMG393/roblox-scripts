@@ -5,6 +5,8 @@ local TeleportService = game:GetService("TeleportService")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 
+local TextResizer = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/TextResizer.luau"))()
+
 local SERVERS_PER_PAGE = 100
 local MAX_PAGES = 10
 
@@ -96,6 +98,7 @@ function ServerHopper:InitUI()
         Label.TextXAlignment = Enum.TextXAlignment.Left
         Label.Font = Enum.Font.Gotham
         Label.Parent = GroupFrame
+		TextResizer:AutoResizeTexts(GroupFrame)
         
         local InputFrame = Instance.new("Frame")
         InputFrame.Size = UDim2.new(1, 0, 0.6, 0)
@@ -119,6 +122,7 @@ function ServerHopper:InitUI()
         TextBox.TextSize = 18
         TextBox.Font = Enum.Font.Gotham
         TextBox.Parent = InputFrame
+		TextResizer:AutoResizeTexts(InputFrame)
         
         return TextBox
     end
@@ -195,8 +199,6 @@ function ServerHopper:InitUI()
     
     local MakeDraggable = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))()
     MakeDraggable:MakeDraggable(MainFrame)
-
-	local TextResizer = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/TextResizer.luau"))()
 	TextResizer:AutoResizeTexts(MainFrame)
     
     return {
