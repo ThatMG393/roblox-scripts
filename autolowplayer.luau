@@ -68,23 +68,45 @@ function ServerHopper:InitUI()
     local UICorner = Instance.new("UICorner")
     UICorner.CornerRadius = UDim.new(0, 8)
     UICorner.Parent = MainFrame
+
+    local HeaderContainer = Instance.new("Frame")
+    HeaderContainer.Name = "HeaderContainer"
+    HeaderContainer.Size = UDim2.new(1, 0, 0.1, 0)
+    HeaderContainer.Position = UDim2.new(0, 0, 0, 0)
+    HeaderContainer.BackgroundTransparency = 1
+    HeaderContainer.Parent = MainFrame
     
     local Title = Instance.new("TextLabel")
     Title.Name = "Title"
-    Title.Size = UDim2.new(1, 0, 0.1, 0)
+    Title.Size = UDim2.new(0.85, 0, 1, 0)
     Title.Position = UDim2.new(0, 0, 0, 0)
     Title.BackgroundTransparency = 1
     Title.Text = "Server Hopper"
     Title.TextColor3 = Color3.fromRGB(255, 255, 255)
     Title.TextSize = 24
     Title.Font = Enum.Font.GothamBold
-    Title.Parent = MainFrame
+    Title.Parent = HeaderContainer
     
-    local function createInputGroup(name, placeholder, yPosition)
+    local ExpandButton = Instance.new("TextButton")
+    ExpandButton.Name = "ExpandButton"
+    ExpandButton.Size = UDim2.new(0.15, 0, 1, 0)
+    ExpandButton.Position = UDim2.new(0.85, 0, 0, 0)
+    ExpandButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    ExpandButton.Text = "▼"
+    ExpandButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ExpandButton.TextSize = 20
+    ExpandButton.Font = Enum.Font.GothamBold
+    ExpandButton.Parent = HeaderContainer
+    
+    local ExpandButtonCorner = Instance.new("UICorner")
+    ExpandButtonCorner.CornerRadius = UDim.new(0, 6)
+    ExpandButtonCorner.Parent = ExpandButton
+
+    local function createInputGroup(name, placeholder, position)
         local GroupFrame = Instance.new("Frame")
         GroupFrame.Name = name .. "Group"
-        GroupFrame.Size = UDim2.new(0.9, 0, 0.15, 0)
-        GroupFrame.Position = UDim2.new(0.05, 0, yPosition, 0)
+        GroupFrame.Size = UDim2.new(0.425, 0, 0.25, 0)
+        GroupFrame.Position = position
         GroupFrame.BackgroundTransparency = 1
         GroupFrame.Parent = MainFrame
         
@@ -98,7 +120,7 @@ function ServerHopper:InitUI()
         Label.TextXAlignment = Enum.TextXAlignment.Left
         Label.Font = Enum.Font.Gotham
         Label.Parent = GroupFrame
-		TextResizer:AutoResizeTexts(GroupFrame)
+        TextResizer:AutoResizeTexts(GroupFrame)
         
         local InputFrame = Instance.new("Frame")
         InputFrame.Size = UDim2.new(1, 0, 0.6, 0)
@@ -122,20 +144,20 @@ function ServerHopper:InitUI()
         TextBox.TextSize = 18
         TextBox.Font = Enum.Font.Gotham
         TextBox.Parent = InputFrame
-		TextResizer:AutoResizeTexts(InputFrame)
+        TextResizer:AutoResizeTexts(InputFrame)
         
         return TextBox
     end
-    
-    local MinPlayersInput = createInputGroup("Min Players", "3", 0.12)
-    local MaxPlayersInput = createInputGroup("Max Players", "5", 0.29)
-    local MinPingInput = createInputGroup("Min Ping", "300", 0.46)
-    local MaxPingInput = createInputGroup("Max Ping", "400", 0.63)
+
+    local MinPlayersInput = createInputGroup("Min Players", "3", UDim2.new(0.05, 0, 0.12, 0))
+    local MaxPlayersInput = createInputGroup("Max Players", "5", UDim2.new(0.525, 0, 0.12, 0))
+    local MinPingInput = createInputGroup("Min Ping", "300", UDim2.new(0.05, 0, 0.4, 0))
+    local MaxPingInput = createInputGroup("Max Ping", "400", UDim2.new(0.525, 0, 0.4, 0))
     
     local StatusLabel = Instance.new("TextLabel")
     StatusLabel.Name = "StatusLabel"
     StatusLabel.Size = UDim2.new(0.9, 0, 0.07, 0)
-    StatusLabel.Position = UDim2.new(0.05, 0, 0.8, 0)
+    StatusLabel.Position = UDim2.new(0.05, 0, 0.7, 0)
     StatusLabel.BackgroundTransparency = 1
     StatusLabel.Text = ""
     StatusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -144,8 +166,6 @@ function ServerHopper:InitUI()
     StatusLabel.Parent = MainFrame
     
     local function createButton(name, text, position)
-        local disabled = false
-        
         local Button = Instance.new("TextButton")
         Button.Name = name
         Button.Size = UDim2.new(0.4, 0, 0.08, 0)
@@ -161,32 +181,28 @@ function ServerHopper:InitUI()
         ButtonCorner.CornerRadius = UDim.new(0, 6)
         ButtonCorner.Parent = Button
         
-        Button.MouseEnter:Connect(function()
-            if not disabled then
-                TweenService:Create(Button, TweenInfo.new(0.2), {
-                    BackgroundColor3 = Color3.fromRGB(0, 100, 210)
-                }):Play()
-            end
-        end)
+        function Button:SetDisabled(disabled)
+            self.BackgroundColor3 = disabled and Color3.fromRGB(100, 100, 100) or Color3.fromRGB(0, 122, 255)
+        end
         
-        Button.MouseLeave:Connect(function()
-            if not disabled then
-                TweenService:Create(Button, TweenInfo.new(0.2), {
-                    BackgroundColor3 = Color3.fromRGB(0, 122, 255)
-                }):Play()
-            end
-        end)
-        
-        local b = { b = Button }
-        function b:SetDisabled(d) disabled = d end
-        
-        return b
+        return Button
     end
     
-    local SearchButton = createButton("SearchButton", "Search", UDim2.new(0.05, 0, 0.89, 0))
-    local TeleportButton = createButton("TeleportButton", "Teleport", UDim2.new(0.55, 0, 0.89, 0))
-    TeleportButton.b.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    local SearchButton = createButton("SearchButton", "Search", UDim2.new(0.05, 0, 0.82, 0))
+    local TeleportButton = createButton("TeleportButton", "Teleport", UDim2.new(0.55, 0, 0.82, 0))
     TeleportButton:SetDisabled(true)
+    
+    local expanded = true
+    local expandedSize = UDim2.new(1, 0, 1, 0)
+    local contractedSize = UDim2.new(1, 0, 0.1, 0)
+    
+    ExpandButton.MouseButton1Click:Connect(function()
+        expanded = not expanded
+        ExpandButton.Text = expanded and "▼" or "▲"
+        TweenService:Create(MainFrame, TweenInfo.new(0.3), {
+            Size = expanded and expandedSize or contractedSize
+        }):Play()
+    end)
     
     local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
     UIAspectRatioConstraint.AspectRatio = 0.66
@@ -199,7 +215,7 @@ function ServerHopper:InitUI()
     
     local MakeDraggable = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))()
     MakeDraggable:MakeDraggable(MainFrame)
-	TextResizer:AutoResizeTexts(MainFrame)
+    TextResizer:AutoResizeTexts(MainFrame)
     
     return {
         gui = ScreenGui,
@@ -214,7 +230,7 @@ function ServerHopper:InitUI()
 end
 
 function ServerHopper:HandleUI()
-    local ui = ServerHopper:InitUI() 
+    local ui = ServerHopper:InitUI()
     local foundServer = nil
     local searching = false
     
@@ -247,18 +263,14 @@ function ServerHopper:HandleUI()
         return true
     end
     
-    ui.searchButton.b.MouseButton1Click:Connect(function()
+    ui.searchButton.MouseButton1Click:Connect(function()
         if not validateInputs() then return end
         if searching then return end
         searching = true
 
-        ui.searchButton.b.Text = "..."
-        ui.searchButton.b.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        ui.searchButton.Text = "..."
         ui.searchButton:SetDisabled(true)
-
-        ui.teleportButton.b.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
         ui.teleportButton:SetDisabled(true)
-
         updateStatus("Searching for server...", false)
 
         local result = ServerHopper:FindServer(
@@ -269,30 +281,23 @@ function ServerHopper:HandleUI()
         )
 
         searching = false
-
-        ui.searchButton.b.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
-        ui.searchButton.b.Text = "Retry"
+        ui.searchButton.Text = "Retry"
         ui.searchButton:SetDisabled(false)
 
         if result.serverInfo ~= nil then
             foundServer = result.serverInfo
             updateStatus("Found server! Ping: " .. foundServer.ping .. ", Players: " .. foundServer.playing)
-            ui.teleportButton.b.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
             ui.teleportButton:SetDisabled(false)
         else
             updateStatus("Failed to find a server", true)
-            ui.teleportButton.b.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
             ui.teleportButton:SetDisabled(true)
         end
     end)
 
-    ui.teleportButton.b.MouseButton1Click:Connect(function()
+    ui.teleportButton.MouseButton1Click:Connect(function()
         if searching then return end
         if foundServer == nil then return end
-
-        TeleportService:TeleportToPlaceInstance(
-            game.PlaceId, foundServer.id, Players.LocalPlayer
-        )
+        TeleportService:TeleportToPlaceInstance(game.PlaceId, foundServer.id, Players.LocalPlayer)
     end)
     
     ui.gui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
