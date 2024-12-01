@@ -49,11 +49,11 @@ function M:MakeDraggableFromWithAnim(animDelay: number, inputRecv: GuiObject, gu
 end
 
 function M:MakeDraggableFrom(inputRecv: GuiObject, guiToMove: GuiObject)
-	self:MakeDraggableFromWithAnim(0.25, inputRecv, guiToMove)
+	M:MakeDraggableFromWithAnim(0.25, inputRecv, guiToMove)
 end
 
 function M:MakeDraggable(gui: GuiObject)
-	self:MakeDraggableFrom(gui, gui)
+	M:MakeDraggableFrom(gui, gui)
 end
 
 return M
