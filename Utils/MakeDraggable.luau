@@ -27,13 +27,9 @@ function M:MakeDraggableFromWithAnim(inputRecv: GuiObject, guiToMove: GuiObject,
 			dragStart = input.Position
 			startPos = guiToMove.Position
 
-			UserInputService.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
-			
 			input.Changed:Connect(function()
 				if input.UserInputState == Enum.UserInputState.End then
 					dragging = false
-
-					UserInputService.MouseBehavior = Enum.MouseBehavior.Default
 				end
 			end)
 		end
