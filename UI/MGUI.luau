@@ -169,7 +169,7 @@ function UILibrary.CreateWindow(WindowTitle, Theme, ResetOnSpawn)
         Elements.Position = UDim2.new(0, 10, 0, 10)
         Elements.BackgroundTransparency = 1
         Elements.ScrollBarThickness = 1
-        Elements.ScrollingDirection = Enum.ScrollingDirection.X
+        Elements.ScrollingDirection = Enum.ScrollingDirection.Y
         Elements.ElasticBehavior = Enum.ElasticBehavior.Never
         Elements.Visible = false
         Elements.Parent = TabContent
