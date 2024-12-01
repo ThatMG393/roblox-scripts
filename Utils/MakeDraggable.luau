@@ -2,7 +2,7 @@ local M = { }
 
 local UserInputService = game:GetService("UserInputService")
 
-function M:MakeDraggableFromWithAnim(inputRecv: GuiObject, guiToMove: GuiObject, animDelay: number)
+function M:MakeDraggableFromWithAnim(animDelay: number, inputRecv: GuiObject, guiToMove: GuiObject)
 	local dragging
 	local dragInput
 	local dragStart
@@ -49,7 +49,7 @@ function M:MakeDraggableFromWithAnim(inputRecv: GuiObject, guiToMove: GuiObject,
 end
 
 function M:MakeDraggableFrom(inputRecv: GuiObject, guiToMove: GuiObject)
-	self.MakeDraggableFromWithAnim(inputRecv, guiToMove, .25)
+	self.MakeDraggableFromWithAnim(0.25, inputRecv, guiToMove)
 end
 
 function M:MakeDraggable(gui: GuiObject)
