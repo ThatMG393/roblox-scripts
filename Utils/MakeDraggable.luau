@@ -18,10 +18,14 @@ function M:MakeDraggableFrom(inputRecv: GuiObject, guiToMove: GuiObject)
 			dragging = true
 			dragStart = input.Position
 			startPos = guiToMove.Position
+
+			UserInputService.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
 			
 			input.Changed:Connect(function()
 				if input.UserInputState == Enum.UserInputState.End then
 					dragging = false
+
+					UserInputService.MouseBehavior = Enum.MouseBehavior.Default
 				end
 			end)
 		end
