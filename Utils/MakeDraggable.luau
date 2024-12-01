@@ -2,7 +2,7 @@ local M = { }
 
 local UserInputService = game:GetService("UserInputService")
 
-function M:MakeDraggableFrom(inputRecv: GuiObject, guiToMove: GuiObject)
+function M:MakeDraggableFromWithAnim(inputRecv: GuiObject, guiToMove: GuiObject, animDelay: number)
 	local dragging
 	local dragInput
 	local dragStart
@@ -10,7 +10,12 @@ function M:MakeDraggableFrom(inputRecv: GuiObject, guiToMove: GuiObject)
 
 	local function update(input)
 		local delta = input.Position - dragStart
-		guiToMove.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+
+		if animDelay ~= nil or animDelay > 0 then
+			game:GetService("TweenService"):Create(guiToMove, TweenInfo.new(animDelay), {
+				Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+			}):Play()
+		end
 	end
 
 	inputRecv.InputBegan:Connect(function(input)
@@ -44,6 +49,9 @@ function M:MakeDraggableFrom(inputRecv: GuiObject, guiToMove: GuiObject)
 	end)
 end
 
+function M:MakeDraggableFrom(inputRecv: GuiObject, guiToMove: GuiObject)
+	self.MakeDraggableFromWithAnim(inputRecv, guiToMove, .25)
+end
 
 function M:MakeDraggable(gui: GuiObject)
 	self.MakeDraggableFrom(gui, gui)
