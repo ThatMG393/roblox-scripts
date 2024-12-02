@@ -8,16 +8,18 @@ local Players = game:GetService("Players")
 local TextResizer = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/TextResizer.luau"))()
 
 local SERVERS_PER_PAGE = 100
-local MAX_PAGES = 10
+local MAX_PAGES = 3
 
 function ServerHopper:FindServer(minPlayer, maxPlayer, minPing, maxPing)
     local function GetServersAPI(cursor)
         local url = string.format(
-            "https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=%d%s",
+            "https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=%d%s",
             game.PlaceId,
             SERVERS_PER_PAGE,
             cursor and "&cursor=" .. cursor or ""
         )
+
+        print(url)
         return HttpService:JSONDecode(game:HttpGet(url))
     end
     
@@ -166,6 +168,8 @@ function ServerHopper:InitUI()
     StatusLabel.Parent = MainFrame
     
     local function createButton(name, text, position)
+    	local disabled = false
+
         local Button = Instance.new("TextButton")
         Button.Name = name
         Button.Size = UDim2.new(0.4, 0, 0.08, 0)
@@ -180,10 +184,27 @@ function ServerHopper:InitUI()
         local ButtonCorner = Instance.new("UICorner")
         ButtonCorner.CornerRadius = UDim.new(0, 6)
         ButtonCorner.Parent = Button
+
+		Button.MouseEnter:Connect(function()
+            if not disabled then
+                TweenService:Create(Button, TweenInfo.new(0.2), {
+                    BackgroundColor3 = Color3.fromRGB(0, 100, 210)
+                }):Play()
+            end
+        end)
+        
+        Button.MouseLeave:Connect(function()
+            if not disabled then
+                TweenService:Create(Button, TweenInfo.new(0.2), {
+                    BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+                }):Play()
+            end
+        end)
         
         local M = { UI = Button }
-        function M:SetDisabled(disabled)
-            self.UI.BackgroundColor3 = disabled and Color3.fromRGB(100, 100, 100) or Color3.fromRGB(0, 122, 255)
+        function M:SetDisabled(d)
+        	disabled = d
+            Button.BackgroundColor3 = disabled and Color3.fromRGB(100, 100, 100) or Color3.fromRGB(0, 122, 255)
         end
         
         return M

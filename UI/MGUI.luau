@@ -14,10 +14,11 @@ UILibrary.Themes = {
         Background = Color3.fromRGB(30, 30, 30),
         AboveBackground = Color3.fromRGB(50, 50, 50),
         TextColor = Color3.fromRGB(255, 255, 255),
+        PlaceholderColor = Color3.fromRGB(50, 50, 50)
     }
 }
 
-UILibrary.DefaultOption = {
+UILibrary.DefaultWindowOptions = {
 	WindowTitle = "MGUI",
 	WindowTheme = UILibrary.Themes.Dark,
 	WindowSize = { X = 500, Y = 330 },
@@ -26,7 +27,7 @@ UILibrary.DefaultOption = {
 }
 
 function UILibrary.CreateWindow(Options)
-	Options = Options or UILibrary.DefaultOption
+	Options = Options or UILibrary.DefaultWindowOptions
 
 	local UserInterface = Players.LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("UILibrary-"..Options.WindowTitle, false)
     if UserInterface then UserInterface:Destroy() end
@@ -48,7 +49,7 @@ function UILibrary.CreateWindow(Options)
     local GUI = Instance.new("ScreenGui")
     GUI.Name = "UILibrary-" .. Options.WindowTitle
     GUI.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
-    GUI.ResetOnSpawn = Options.ResetOnSpawn or true
+    GUI.ResetOnSpawn = Options.ResetOnSpawn
     
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "Main"
@@ -193,6 +194,7 @@ function UILibrary.CreateWindow(Options)
         Container.Visible = not IsCollapsed
     end
 
+	if Options.CollapseOnStart then Window:Collapse() end
     
     function Window:CreateTab(TabName)
         local Tab = {
@@ -562,6 +564,7 @@ function UILibrary.CreateWindow(Options)
 				TextBox.PlaceholderText = tostring(InputPlaceholder)
 				TextBox.Text = DefaultValue and tostring(DefaultValue) or ""
 				TextBox.TextColor3 = CurrentTheme.TextColor
+				TextBox.PlaceholderColor3 = CurrentTheme.PlaceholderColor
 				TextBox.BackgroundColor3 = CurrentTheme.Background
 				TextBox.Parent = InputField.UI
 				TextBox.BorderSizePixel = 0
@@ -572,6 +575,7 @@ function UILibrary.CreateWindow(Options)
                     self.UI.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.AboveBackground) or CurrentTheme.AboveBackground
                     TextLabel.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor) or CurrentTheme.TextColor
                     TextBox.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor) or CurrentTheme.TextColor
+                    TextBox.PlaceholderColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.PlaceholderColor) or CurrentTheme.PlaceholderColor
                 	TextBox.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Background) or CurrentTheme.Background
 				end
 
@@ -607,7 +611,6 @@ function UILibrary.CreateWindow(Options)
     end
 
     CollapseButton.MouseButton1Click:Connect(Window.Collapse)
-    if Options.CollapseOnStart then Window:Collapse() end
 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))():MakeDraggableFromWithAnim(0.10, TitleBar, MainFrame)
     
@@ -619,7 +622,7 @@ end
 function UILibrary:ShowTestUI()
 	local i = 0
 
-	local Opts = UILibrary.DefaultOption
+	local Opts = UILibrary.DefaultWindowOptions
 	Opts.WindowTitle = "MGUI Test UI"
 
     local MainWindow = UILibrary.CreateWindow()
