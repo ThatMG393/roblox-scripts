@@ -1,8 +1,8 @@
-local MGUI = require("UI/MGUI") -- loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/UI/MGUI.luau"))()
+local MGUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/UI/MGUI.luau"))()
 local Players = game:GetService("Players")
 
 local function Main()
-	local WinOpt = MGUI.DefaultOption
+	local WinOpt = MGUI.DefaultWindowOptions
 	WinOpt.WindowTitle = "Simple Sex GUI"
 	WinOpt.WindowSize = { X = 317, Y = 271 }
 	WinOpt.ResetOnSpawn = false

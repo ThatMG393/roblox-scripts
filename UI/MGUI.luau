@@ -301,7 +301,7 @@ function UILibrary.CreateWindow(Options)
                 SectionFrame.Size = UDim2.new(1, 0, 0, SectionList.AbsoluteContentSize.Y + 40)
             end)
 
-            function Section:CreateLabel(LabelText)
+            function Section:CreateLabel(LabelText, LabelTextSize)
             	local Label = {}
             	Label.UI = Instance.new("Frame")
             	Label.UI.Size = UDim2.new(1, 0, 0.4, 0)
@@ -315,8 +315,8 @@ function UILibrary.CreateWindow(Options)
             	TextLabel.Position = UDim2.new(0.05, 0, 0, 0)
             	TextLabel.AutomaticSize = Enum.AutomaticSize.XY
             	TextLabel.BackgroundTransparency = 1
-            	TextLabel.Text = LabelText
-            	TextLabel.TextSize = 12
+            	TextLabel.Text = tostring(LabelText)
+            	TextLabel.TextSize = LabelTextSize or 12
             	TextLabel.TextColor3 = CurrentTheme.TextColor
             	TextLabel.Font = Enum.Font.GothamBold
             	TextLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -339,7 +339,7 @@ function UILibrary.CreateWindow(Options)
                 Button.UI.Name = "Button"
                 Button.UI.Size = UDim2.new(1, 0, 0, 30)
                 Button.UI.BackgroundColor3 = CurrentTheme.AboveBackground
-                Button.UI.Text = ButtonText
+                Button.UI.Text = tostring(ButtonText)
                 Button.UI.TextColor3 = CurrentTheme.TextColor
                 Button.UI.TextSize = 14
                 Button.UI.Font = Enum.Font.Gotham
@@ -393,7 +393,7 @@ function UILibrary.CreateWindow(Options)
                 Label.Size = UDim2.new(1, -80, 1, 0)
                 Label.Position = UDim2.new(0.05, 0, 0, 0)
                 Label.BackgroundTransparency = 1
-                Label.Text = ToggleText
+                Label.Text = tostring(ToggleText)
                 Label.TextColor3 = CurrentTheme.TextColor
                 Label.TextSize = 14
                 Label.Font = Enum.Font.Gotham
@@ -458,7 +458,7 @@ function UILibrary.CreateWindow(Options)
                 Label.Size = UDim2.new(0.69, 0, 0.5, 0)
                 Label.Position = UDim2.new(0.07, 0, 0.05, 0)
                 Label.BackgroundTransparency = 1
-                Label.Text = SliderText
+                Label.Text = tostring(SliderText)
                 Label.TextColor3 = CurrentTheme.TextColor
                 Label.TextSize = 14
                 Label.Font = Enum.Font.GothamBold
@@ -561,7 +561,7 @@ function UILibrary.CreateWindow(Options)
 				local TextBox = Instance.new("TextBox")
 				TextBox.Position = UDim2.new(0.05, 0, 0.4 ,0)
 				TextBox.Size = UDim2.new(0.90, 0, 0.5, 0)
-				TextBox.PlaceholderText = tostring(InputPlaceholder)
+				TextBox.PlaceholderText = InputPlaceholder and tostring(InputPlaceholder) or ""
 				TextBox.Text = DefaultValue and tostring(DefaultValue) or ""
 				TextBox.TextColor3 = CurrentTheme.TextColor
 				TextBox.PlaceholderColor3 = CurrentTheme.PlaceholderColor
