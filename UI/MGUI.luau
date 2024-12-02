@@ -351,19 +351,15 @@ function UILibrary.CreateWindow(Options)
                 end
                 
                 Button.UI.MouseEnter:Connect(function()
-                    if not Button.Disabled then
-                        TweenService:Create(Button.UI, TweenInfo.new(0.2), {
-                            BackgroundColor3 = CurrentTheme.Secondary
-                        }):Play()
-                    end
+                    TweenService:Create(Button.UI, TweenInfo.new(0.2), {
+                        BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Secondary) or CurrentTheme.Secondary
+                    }):Play()
                 end)
                 
                 Button.UI.MouseLeave:Connect(function()
-                    if not Button.Disabled then
-                        TweenService:Create(Button.UI, TweenInfo.new(0.2), {
-                            BackgroundColor3 = CurrentTheme.AboveBackground
-                        }):Play()
-                    end
+                    TweenService:Create(Button.UI, TweenInfo.new(0.2), {
+                        BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.AboveBackground) or CurrentTheme.AboveBackground
+                    }):Play()
                 end)
                 
                 Button.UI.MouseButton1Click:Connect(function()
@@ -432,8 +428,16 @@ function UILibrary.CreateWindow(Options)
                 	if not Toggle.Disabled then Toggle:ToggleState() end
                 end)
 
-                ClickableFrames:MouseButton1ClickConnect(Toggle.UI, function()
-                	if not Toggle.Disabled then Toggle:ToggleState() end
+				Toggle.UI.MouseEnter:Connect(function()
+                    TweenService:Create(Toggle.UI, TweenInfo.new(0.2), {
+                        BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Secondary) or CurrentTheme.Secondary
+                    }):Play()
+                end)
+                
+                Toggle.UI.MouseLeave:Connect(function()
+                    TweenService:Create(Toggle.UI, TweenInfo.new(0.2), {
+                        BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.AboveBackground) or CurrentTheme.AboveBackground
+                    }):Play() 
                 end)
 
                 return Toggle
