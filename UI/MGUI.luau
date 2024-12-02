@@ -316,7 +316,8 @@ function UILibrary.CreateWindow(Options)
             	TextLabel.Text = tostring(LabelText)
             	TextLabel.TextSize = tonumber(LabelTextSize) or 12
             	TextLabel.TextColor3 = CurrentTheme.TextColor
-            	TextLabel.Font = Enum.Font.GothamBold	
+            	TextLabel.Font = Enum.Font.GothamBold
+            	TextLabel.TextXAlignment = Enum.TextXAlignment.Center
             	TextLabel.Parent = Label.UI
             	TextLabel.BorderSizePixel = 0
 
