@@ -17,28 +17,46 @@ UILibrary.Themes = {
     }
 }
 
-function UILibrary.CreateWindow(WindowTitle, Theme, ResetOnSpawn)
-	local UserInterface = Players.LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("UILibrary-"..WindowTitle, false)
+UILibrary.DefaultOption = {
+	WindowTitle = "MGUI",
+	WindowTheme = UILibrary.Themes.Dark,
+	WindowSize = { X = 500, Y = 330 },
+	ResetOnSpawn = true,
+	CollapseOnStart = false
+}
+
+function UILibrary.CreateWindow(Options)
+	Options = Options or UILibrary.DefaultOption
+
+	local UserInterface = Players.LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("UILibrary-"..Options.WindowTitle, false)
     if UserInterface then UserInterface:Destroy() end
 
-    local Window = {}
-    local CurrentTheme = Theme or UILibrary.Themes.Dark
+    local TabList = {}
+
+    local CurrentTheme = Options.Theme or UILibrary.Themes.Dark
     local CurrentTab = nil
     
     local IsCollapsed = false
     local IsCollapsing = false
-    
+
+	local Window = {
+    	Options = Options,
+    	CurrentTheme = CurrentTheme,
+    	CurrentTab = CurrentTab
+    }
+
     local GUI = Instance.new("ScreenGui")
-    GUI.Name = "UILibrary-" .. WindowTitle
+    GUI.Name = "UILibrary-" .. Options.WindowTitle
     GUI.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
-    GUI.ResetOnSpawn = ResetOnSpawn or true
+    GUI.ResetOnSpawn = Options.ResetOnSpawn or true
     
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "Main"
-    MainFrame.Size = UDim2.new(0, 350, 0, 330)
+    MainFrame.Size = UDim2.new(0, Options.WindowSize.X, 0, Options.WindowSize.Y)
     MainFrame.Position = UDim2.new(0.5, -150, 0.5, -175)
     MainFrame.BackgroundColor3 = CurrentTheme.Background
     MainFrame.Parent = GUI
+    MainFrame.Visible = false
     MainFrame.BorderSizePixel = 0
     
     local TitleBar = Instance.new("Frame")
@@ -52,7 +70,7 @@ function UILibrary.CreateWindow(WindowTitle, Theme, ResetOnSpawn)
     TitleText.Name = "Title"
     TitleText.Size = UDim2.new(1, 0, 1, 0)
     TitleText.BackgroundTransparency = 1
-    TitleText.Text = WindowTitle
+    TitleText.Text = Options.WindowTitle
     TitleText.TextColor3 = CurrentTheme.TextColor
     TitleText.TextSize = 16
     TitleText.Font = Enum.Font.GothamMedium
@@ -85,12 +103,22 @@ function UILibrary.CreateWindow(WindowTitle, Theme, ResetOnSpawn)
     TabContainer.Parent = Container
     TabContainer.BorderSizePixel = 0
     
-    local TabButtons = Instance.new("Frame")
+    local TabButtons = Instance.new("ScrollingFrame")
     TabButtons.Name = "TabButtons"
     TabButtons.Size = UDim2.new(1, 0, 0, 30)
     TabButtons.BackgroundColor3 = CurrentTheme.AboveBackground
-    TabButtons.Parent = TabContainer
+	TabButtons.ScrollBarThickness = 0
+	TabButtons.ScrollingDirection = Enum.ScrollingDirection.X
+	TabButtons.ElasticBehavior = Enum.ElasticBehavior.Never
+    TabButtons.AutomaticCanvasSize = Enum.AutomaticSize.X
+    TabButtons.ScrollingEnabled = false
     TabButtons.Visible = false
+	TabButtons.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+    TabButtons.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+    TabButtons.BottomImage = ""
+    TabButtons.ScrollBarImageTransparency = 0.5
+    
+    TabButtons.Parent = TabContainer
     TabButtons.BorderSizePixel = 0
     
     local TabButtonsList = Instance.new("UIListLayout")
@@ -105,7 +133,29 @@ function UILibrary.CreateWindow(WindowTitle, Theme, ResetOnSpawn)
     TabContent.Parent = TabContainer
     TabContent.BorderSizePixel = 0
 
-    CollapseButton.MouseButton1Click:Connect(function() 
+	local MIN_TAB_WIDTH = 120
+    local function UpdateTabButtonSizes()
+        local TabCount = #TabList
+        if TabCount <= 1 then return end
+
+        local AnimationOpts = TweenInfo.new(0.50, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
+        
+        local TotalWidth = TabButtons.AbsoluteSize.X
+        local CalculatedButtonWidth = math.max(MIN_TAB_WIDTH, TotalWidth / TabCount)
+        local TotalRequiredWidth = CalculatedButtonWidth * TabCount
+        
+        TabButtons.ScrollingEnabled = TotalRequiredWidth > TotalWidth
+        TabButtons.ScrollBarThickness = TabButtons.ScrollingEnabled and 1 or 0
+        
+        for _, tab in ipairs(TabList) do
+            TweenService:Create(
+            	tab.Button, AnimationOpts,
+            	{ Size = UDim2.new(0, CalculatedButtonWidth, 0, 30) }
+            ):Play()
+        end
+    end
+
+	function Window:Collapse()	
     	if IsCollapsing then return end
 
 		IsCollapsed = not IsCollapsed
@@ -113,9 +163,9 @@ function UILibrary.CreateWindow(WindowTitle, Theme, ResetOnSpawn)
 
 		local AnimationInfo = TweenInfo.new(0.65, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
 
-        local TargetHeight = IsCollapsed and 24 or 330
+        local TargetHeight = IsCollapsed and 24 or Options.WindowSize.Y
+        local TargetWidth = IsCollapsed and 200 or Options.WindowSize.X
         local TargetTitleHeight = IsCollapsed and 24 or 30
-		local TargetWidth = IsCollapsed and 200 or 350
         local TargetTextSize = IsCollapsed and 14 or 16 
 
         TweenService:Create(MainFrame, AnimationInfo, {
@@ -141,11 +191,8 @@ function UILibrary.CreateWindow(WindowTitle, Theme, ResetOnSpawn)
         end)
 
         Container.Visible = not IsCollapsed
-    end)
+    end
 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))():MakeDraggableFromWithAnim(0.10, TitleBar, MainFrame)
-
-    local TabList = {}
     
     function Window:CreateTab(TabName)
         local Tab = {
@@ -154,7 +201,7 @@ function UILibrary.CreateWindow(WindowTitle, Theme, ResetOnSpawn)
 
         local TabButton = Instance.new("TextButton")
         TabButton.Name = TabName
-        TabButton.Size = UDim2.new(0, 100, 1, 0)
+        TabButton.Size = UDim2.new(0, 100, 0, 30)
         TabButton.BackgroundColor3 = CurrentTheme.AboveBackground
         TabButton.Text = TabName
         TabButton.TextColor3 = CurrentTheme.TextColor
@@ -162,6 +209,8 @@ function UILibrary.CreateWindow(WindowTitle, Theme, ResetOnSpawn)
         TabButton.Font = Enum.Font.Gotham
         TabButton.Parent = TabButtons
         TabButton.BorderSizePixel = 0
+
+        Tab.Button = TabButton
         
         local Elements = Instance.new("ScrollingFrame")
         Elements.Name = "Elements"
@@ -396,28 +445,40 @@ function UILibrary.CreateWindow(WindowTitle, Theme, ResetOnSpawn)
                 }
 
                 Slider.UI = Instance.new("Frame")
-                Slider.UI.Name = "Slider"
+                Slider.UI.Name = "SliderUI"
                 Slider.UI.Size = UDim2.new(1, 0, 0, 45)
                 Slider.UI.BackgroundColor3 = CurrentTheme.AboveBackground
                 Slider.UI.Parent = SectionContent
                 Slider.UI.BorderSizePixel = 0
-                
+             
                 local Label = Instance.new("TextLabel")
                 Label.Name = "Label"
                 Label.Size = UDim2.new(0.69, 0, 0.5, 0)
-                Label.Position = UDim2.new(0.05, 0, 0, 0)
+                Label.Position = UDim2.new(0.07, 0, 0.05, 0)
                 Label.BackgroundTransparency = 1
                 Label.Text = SliderText
                 Label.TextColor3 = CurrentTheme.TextColor
                 Label.TextSize = 14
-                Label.Font = Enum.Font.Gotham
+                Label.Font = Enum.Font.GothamBold
                 Label.TextXAlignment = Enum.TextXAlignment.Left
                 Label.Parent = Slider.UI
                 Label.BorderSizePixel = 0
+
+				local ValueLabel = Instance.new("TextLabel")
+                ValueLabel.Name = "Value"
+                ValueLabel.Size = UDim2.new(0, 50, 0.5, 0)
+                ValueLabel.Position = UDim2.new(0.85, 0, 0.05, 0)
+                ValueLabel.BackgroundTransparency = 1
+				ValueLabel.Text = tostring(DefaultValue)
+                ValueLabel.TextColor3 = CurrentTheme.TextColor
+                ValueLabel.TextSize = 14
+                ValueLabel.Font = Enum.Font.GothamBold
+                ValueLabel.Parent = Slider.UI
+                ValueLabel.BorderSizePixel = 0
                 
                 local SliderBar = Instance.new("Frame")
                 SliderBar.Name = "SliderBar"
-                SliderBar.Size = UDim2.new(1, -26, 0, 12)
+                SliderBar.Size = UDim2.new(0.90, 0, 0, 12)
                 SliderBar.Position = UDim2.new(0.05, 0, 0.55, 0)
                 SliderBar.BackgroundColor3 = CurrentTheme.Secondary
                 SliderBar.Parent = Slider.UI
@@ -429,18 +490,6 @@ function UILibrary.CreateWindow(WindowTitle, Theme, ResetOnSpawn)
                 Fill.BackgroundColor3 = CurrentTheme.Primary
                 Fill.Parent = SliderBar
                 Fill.BorderSizePixel = 0
-
-                local ValueLabel = Instance.new("TextLabel")
-                ValueLabel.Name = "Value"
-                ValueLabel.Size = UDim2.new(0, 50, 0.5, 0)
-                ValueLabel.Position = UDim2.new(1, -60, 0, 0)
-                ValueLabel.BackgroundTransparency = 1
-				ValueLabel.Text = tostring(DefaultValue)
-                ValueLabel.TextColor3 = CurrentTheme.TextColor
-                ValueLabel.TextSize = 14
-                ValueLabel.Font = Enum.Font.Gotham
-                ValueLabel.Parent = Slider.UI
-                ValueLabel.BorderSizePixel = 0
                 
                 function Slider:SetDisabled(State)
                     self.Disabled = State
@@ -454,7 +503,11 @@ function UILibrary.CreateWindow(WindowTitle, Theme, ResetOnSpawn)
                 function Slider:SetPercentage(Percentage: number)
 					local SliderValue = math.floor(math.clamp(Percentage, MinValue, MaxValue))
 
-					Fill.Size = UDim2.new(SliderValue / 100, 0, 1, 0)
+					TweenService:Create(
+						Fill,
+						TweenInfo.new(0.2, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out),
+						{ Size = UDim2.new(SliderValue / 100, 0, 1, 0) }
+					):Play()
                     ValueLabel.Text = tostring(SliderValue)
 
                     Callback(SliderValue)
@@ -479,11 +532,68 @@ function UILibrary.CreateWindow(WindowTitle, Theme, ResetOnSpawn)
                 end)                
                 return Slider
             end
+
+			function Section:CreateInputField(InputLabel, InputPlaceholder, DefaultValue)
+				local InputField = {
+					Disabled = false
+				}
+
+				InputField.UI = Instance.new("Frame")
+				InputField.UI.Name = "InputField"
+				InputField.UI.Size = UDim2.new(1, 0, 0, 70)
+				InputField.UI.BackgroundColor3 = CurrentTheme.AboveBackground
+				InputField.UI.Parent = SectionContent
+				InputField.UI.BorderSizePixel = 0
+
+				local TextLabel = Instance.new("TextLabel")
+                TextLabel.Position = UDim2.new(0.1, 0, 0.1, 0)
+				TextLabel.AutomaticSize = Enum.AutomaticSize.XY
+				TextLabel.BackgroundTransparency = 1
+				TextLabel.Text = tostring(InputLabel)
+				TextLabel.TextColor3 = CurrentTheme.TextColor
+				TextLabel.TextSize = 14
+				TextLabel.Font = Enum.Font.GothamBold
+				TextLabel.Parent = InputField.UI
+				TextLabel.BorderSizePixel = 0
+
+				local TextBox = Instance.new("TextBox")
+				TextBox.Position = UDim2.new(0.05, 0, 0.4 ,0)
+				TextBox.Size = UDim2.new(0.90, 0, 0.5, 0)
+				TextBox.PlaceholderText = tostring(InputPlaceholder)
+				TextBox.Text = DefaultValue and tostring(DefaultValue) or ""
+				TextBox.TextColor3 = CurrentTheme.TextColor
+				TextBox.BackgroundColor3 = CurrentTheme.Background
+				TextBox.Parent = InputField.UI
+				TextBox.BorderSizePixel = 0
+
+				function InputField:SetDisabled(State)
+					self.Disabled = State
+					TextBox.Active = not State
+                    self.UI.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.AboveBackground) or CurrentTheme.AboveBackground
+                    TextLabel.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor) or CurrentTheme.TextColor
+                    TextBox.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor) or CurrentTheme.TextColor
+                	TextBox.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Background) or CurrentTheme.Background
+				end
+
+				function InputField:SetText(NewText)
+					TextBox.Text = tostring(NewText)
+				end
+
+				function InputField:GetText()
+					return TextBox.Text	
+				end
+
+				return InputField
+			end
+
             return Section
         end
         table.insert(TabList, Tab)
 
         if #TabList == 1 then Tab:Select() end
+
+        MainFrame:GetPropertyChangedSignal("AbsoluteSize"):Connect(UpdateTabButtonSizes)
+        UpdateTabButtonSizes()
         return Tab
     end
     
@@ -495,12 +605,24 @@ function UILibrary.CreateWindow(WindowTitle, Theme, ResetOnSpawn)
             return CurrentTab and TabList[1]:CreateSection(SectionName)
         end
     end
+
+    CollapseButton.MouseButton1Click:Connect(Window.Collapse)
+    if Options.CollapseOnStart then Window:Collapse() end
+
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))():MakeDraggableFromWithAnim(0.10, TitleBar, MainFrame)
     
+    MainFrame.Visible = true
+
     return Window
 end
 
 function UILibrary:ShowTestUI()
-    local MainWindow = UILibrary.CreateWindow("MGUI Test UI", UILibrary.Themes.Dark, false)
+	local i = 0
+
+	local Opts = UILibrary.DefaultOption
+	Opts.WindowTitle = "MGUI Test UI"
+
+    local MainWindow = UILibrary.CreateWindow()
     local MainSection = MainWindow:CreateSection("Test section")
     MainSection:CreateToggle("hello", true, function(State) print("damn") end)
     
@@ -509,15 +631,23 @@ function UILibrary:ShowTestUI()
     	ping:UpdateLabel("Ping: "..math.floor(Players.LocalPlayer:GetNetworkPing() * 2000))
     end)
 
+    MainSection:CreateButton("New tab-uh", function()
+    	MainWindow:CreateTab("Newtab-uh #"..i)
+    	i = i + 1
+    end)
+
     local TestTab = MainWindow:CreateTab("More tests tab")
 
-    local TestSection = TestTab:CreateSection("MOARRRRR")
+    local TestSection = TestTab:CreateSection("Enabled Elements")
+    local TestSection2 = TestTab:CreateSection("Disabled Elements")
     TestSection:CreateSlider("whaaa", 0, 100, 69, function(Value) print(Value) end)
-	TestSection:CreateSlider("whaaa (dis)", 0, 100, 69, function(Value) print(Value) end):SetDisabled(true)
+	TestSection2:CreateSlider("whaaa (dis)", 0, 100, 69, function(Value) print(Value) end):SetDisabled(true)
     TestSection:CreateToggle("hello", true, function(State) print("damn") end)
-    TestSection:CreateToggle("hello (dis)", true, function(State) print("damn") end):SetDisabled(true)
+    TestSection2:CreateToggle("hello (dis)", true, function(State) print("damn") end):SetDisabled(true)
     TestSection:CreateButton("nuh uh", function() end)
-    TestSection:CreateButton("nuh uh (dis)", function() end)
+    TestSection2:CreateButton("nuh uh (dis)", function() end):SetDisabled(true)
+    TestSection:CreateInputField("idk bro", "hihi", 9)
+    TestSection2:CreateInputField("idk bro (dis)", "hihi", 9):SetDisabled(true)
 end
 
 if _G.UI_Debug then UILibrary:ShowTestUI() end
