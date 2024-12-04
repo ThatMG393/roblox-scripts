@@ -4,7 +4,6 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
-local ClickableFrames = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/ClickableFrame.luau"))()
 local ColorUtil = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/ColorUtil.luau"))()
 
 UILibrary.Themes = {
@@ -22,9 +21,33 @@ UILibrary.DefaultWindowOptions = {
 	WindowTitle = "MGUI",
 	WindowTheme = UILibrary.Themes.Dark,
 	WindowSize = { X = 500, Y = 330 },
+	CollapsedWindowSize = { X = 24, Y = 200 },
 	ResetOnSpawn = true,
 	CollapseOnStart = false
 }
+
+local function CreatePadding(Padding, Parent)
+	local UIPadding = Instance.new("UIPadding")
+    UIPadding.PaddingTop = UDim.new(0, Padding)
+	UIPadding.PaddingBottom = UDim.new(0, Padding)
+	UIPadding.PaddingLeft = UDim.new(0, Padding)
+	UIPadding.PaddingRight = UDim.new(0, Padding)
+	UIPadding.Parent = Parent
+
+	return UIPadding
+end
+
+local function CreatePaddingScaled(Padding, Parent)
+	local UIPadding = Instance.new("UIPadding")
+    UIPadding.PaddingTop = UDim.new(Padding, 0)
+	UIPadding.PaddingBottom = UDim.new(Padding, 0)
+	UIPadding.PaddingLeft = UDim.new(Padding, 0)
+	UIPadding.PaddingRight = UDim.new(Padding, 0)
+	UIPadding.Parent = Parent
+
+	return UIPadding
+end
+
 
 function UILibrary.CreateWindow(Options)
 	Options = Options or UILibrary.DefaultWindowOptions
@@ -34,8 +57,7 @@ function UILibrary.CreateWindow(Options)
 
     local TabList = {}
 
-    local CurrentTheme = Options.Theme or UILibrary.Themes.Dark
-    local CurrentTab = nil
+    local CurrentTheme = Options.Theme or UILibrary.Themes.Dark 
     
     local IsCollapsed = false
     local IsCollapsing = false
@@ -43,14 +65,29 @@ function UILibrary.CreateWindow(Options)
 	local Window = {
     	Options = Options,
     	CurrentTheme = CurrentTheme,
-    	CurrentTab = CurrentTab
+    	CurrentTab = nil
     }
 
     local GUI = Instance.new("ScreenGui")
     GUI.Name = "UILibrary-" .. Options.WindowTitle
     GUI.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
     GUI.ResetOnSpawn = Options.ResetOnSpawn
+
+	local NotificationFrame = Instance.new("Frame")
+    NotificationFrame.Name = "Notification"
+    NotificationFrame.Size = UDim2.new(0.3, 0, 0.5, 0)
+    NotificationFrame.Position = UDim2.new(0.7, 0, 0, 0)
+    NotificationFrame.BackgroundTransparency = 1
+    NotificationFrame.Parent = GUI
+    NotificationFrame.BorderSizePixel = 0
     
+	local NotificationList = Instance.new("UIListLayout")
+    NotificationList.FillDirection = Enum.FillDirection.Vertical
+    NotificationList.Padding = UDim.new(0, 4)
+    NotificationList.Parent = NotificationFrame
+
+    CreatePadding(4, NotificationFrame)
+
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "Main"
     MainFrame.Size = UDim2.new(0, Options.WindowSize.X, 0, Options.WindowSize.Y)
@@ -136,10 +173,15 @@ function UILibrary.CreateWindow(Options)
 
 	local MIN_TAB_WIDTH = 120
     local function UpdateTabButtonSizes()
-        local TabCount = #TabList
-        if TabCount <= 1 then return end
+    	local TabCount = #TabList
 
-        local AnimationOpts = TweenInfo.new(0.50, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
+		if TabCount >= 1 then
+            TabButtons.Visible = true
+            TabContent.Size = UDim2.new(1, 0, 1, -30)
+            TabContent.Position = UDim2.new(0, 0, 0, 30)
+        else if TabCount <= 1 then return end end
+
+        local AnimationOpts = TweenInfo.new(0.40, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
         
         local TotalWidth = TabButtons.AbsoluteSize.X
         local CalculatedButtonWidth = math.max(MIN_TAB_WIDTH, TotalWidth / TabCount)
@@ -160,12 +202,14 @@ function UILibrary.CreateWindow(Options)
     	if IsCollapsing then return end
 
 		IsCollapsed = not IsCollapsed
+		Container.Visible = not IsCollapsed
+
 		IsCollapsing = true
 
 		local AnimationInfo = TweenInfo.new(0.65, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
 
-        local TargetHeight = IsCollapsed and 24 or Options.WindowSize.Y
-        local TargetWidth = IsCollapsed and 200 or Options.WindowSize.X
+        local TargetHeight = IsCollapsed and Options.CollapsedWindowSize.X or Options.WindowSize.Y
+        local TargetWidth = IsCollapsed and Options.CollapsedWindowSize.Y or Options.WindowSize.X
         local TargetTitleHeight = IsCollapsed and 24 or 30
         local TargetTextSize = IsCollapsed and 14 or 16 
 
@@ -177,9 +221,7 @@ function UILibrary.CreateWindow(Options)
             Size = UDim2.new(1, 0, 0, TargetTitleHeight)
         }):Play()
         
-        TweenService:Create(TitleText, AnimationInfo, {
-            TextSize = TargetTextSize
-        }):Play()
+        TweenService:Create(TitleText, AnimationInfo, { TextSize = TargetTextSize }):Play()
  
         local tmp = TweenService:Create(CollapseButton, AnimationInfo, {
             Rotation = CollapseButton.Rotation + 180
@@ -187,11 +229,9 @@ function UILibrary.CreateWindow(Options)
 
         tmp:Play()
         tmp.Completed:Connect(function() 
-        	if CollapseButton.Rotation >= 360 then CollapseButton.Rotation = 0 end
+        	CollapseButton.Rotation = CollapseButton.Rotation >= 360 and 0 or CollapseButton.Rotation
         	IsCollapsing = false
         end)
-
-        Container.Visible = not IsCollapsed
     end
 
 	if Options.CollapseOnStart then Window:Collapse() end
@@ -229,24 +269,18 @@ function UILibrary.CreateWindow(Options)
         local ListLayout = Instance.new("UIListLayout")
         ListLayout.Parent = Elements
         ListLayout.Padding = UDim.new(0, 5)
-        
-        if #TabList >= 1 then
-            TabButtons.Visible = true
-            TabContent.Size = UDim2.new(1, 0, 1, -30)
-            TabContent.Position = UDim2.new(0, 0, 0, 30)
-        end
-        
+                
         function Tab:Select()
             if Tab.Disabled then return end
-            if CurrentTab then
-                CurrentTab.Button.BackgroundColor3 = CurrentTheme.AboveBackground
-                CurrentTab.Elements.Visible = false
+            if Window.CurrentTab then
+                Window.CurrentTab.Button.BackgroundColor3 = CurrentTheme.AboveBackground
+                Window.CurrentTab.Elements.Visible = false
             end
             
             TabButton.BackgroundColor3 = CurrentTheme.Background
             TabButton.TextColor3 = CurrentTheme.TextColor
             Elements.Visible = true
-            CurrentTab = { Button = TabButton, Elements = Elements }
+            Window.CurrentTab = { Button = TabButton, Elements = Elements }
         end
         
         TabButton.MouseButton1Click:Connect(function()
@@ -336,7 +370,7 @@ function UILibrary.CreateWindow(Options)
                 Button.UI = Instance.new("TextButton")
                 Button.UI.Name = "Button"
                 Button.UI.Size = UDim2.new(1, 0, 0, 30)
-                Button.UI.BackgroundColor3 = CurrentTheme.AboveBackground
+                Button.UI.BackgroundColor3 = CurrentTheme.AboveBackground 
                 Button.UI.Text = tostring(ButtonText)
                 Button.UI.TextColor3 = CurrentTheme.TextColor
                 Button.UI.TextSize = 14
@@ -549,8 +583,10 @@ function UILibrary.CreateWindow(Options)
 				InputField.UI.Parent = SectionContent
 				InputField.UI.BorderSizePixel = 0
 
+				CreatePaddingScaled(0.05, InputField.UI).PaddingTop = UDim.new(0.1, 0)
+
 				local TextLabel = Instance.new("TextLabel")
-                TextLabel.Position = UDim2.new(0.1, 0, 0.1, 0)
+                TextLabel.Position = UDim2.new(0.05, 0, 0, 0)
 				TextLabel.AutomaticSize = Enum.AutomaticSize.XY
 				TextLabel.BackgroundTransparency = 1
 				TextLabel.Text = tostring(InputLabel)
@@ -561,8 +597,8 @@ function UILibrary.CreateWindow(Options)
 				TextLabel.BorderSizePixel = 0
 
 				local TextBox = Instance.new("TextBox")
-				TextBox.Position = UDim2.new(0.05, 0, 0.4 ,0)
-				TextBox.Size = UDim2.new(0.90, 0, 0.5, 0)
+				TextBox.Position = UDim2.new(0, 0, 0.4 ,0)
+				TextBox.Size = UDim2.new(1, 0, 0.5, 0)
 				TextBox.PlaceholderText = InputPlaceholder and tostring(InputPlaceholder) or ""
 				TextBox.Text = DefaultValue and tostring(DefaultValue) or ""
 				TextBox.TextColor3 = CurrentTheme.TextColor
@@ -591,7 +627,6 @@ function UILibrary.CreateWindow(Options)
 
 				return InputField
 			end
-
             return Section
         end
         table.insert(TabList, Tab)
@@ -608,9 +643,43 @@ function UILibrary.CreateWindow(Options)
             local MainTab = Window:CreateTab("Main")
             return MainTab:CreateSection(SectionName)
         else
-            return CurrentTab and TabList[1]:CreateSection(SectionName)
+            return Window.CurrentTab and TabList[1]:CreateSection(SectionName)
         end
     end
+
+	function Window:Notify(Title, Message)
+		if true then return end
+
+		local NotifFrame = Instance.new("ScrollingFrame")
+		NotifFrame.Size = UDim2.new(1, 0, 0, 0)
+		NotifFrame.AutomaticSize = Enum.AutomaticSize.Y
+		NotifFrame.BackgroundColor3 = CurrentTheme.Background
+		NotifFrame.Parent = NotificationFrame
+		NotifFrame.BorderSizePixel = 0		
+
+		CreatePadding(4, NotifFrame)
+
+		local NotifLabel = Instance.new("TextLabel")
+		NotifLabel.Position = UDim2.new(0, 0, 0, 0)
+		NotifLabel.Size = UDim2.new(1, 0, 0, 0)
+		NotifLabel.AutomaticSize = Enum.AutomaticSize.Y
+		NotifLabel.Text = Title
+		NotifLabel.TextSize = 12
+		NotifLabel.TextColor3 = CurrentTheme.TextColor
+		NotifLabel.BackgroundTransparency = 1
+		NotifLabel.Parent = NotifFrame
+		NotifLabel.BorderSizePixel = 0
+
+		local CloseButton = Instance.new("TextButton")
+		CloseButton.Position = UDim2.new(1, -NotifLabel.AbsoluteSize.Y, 0, 0)
+		CloseButton.Size = UDim2.new(0, 32, 0, 32)
+		CloseButton.Text = "✕"
+		CloseButton.TextSize = 8
+		CloseButton.TextColor3 = Color3.new(1, 0, 0)
+		CloseButton.Font = Enum.Font.GothamBold
+		CloseButton.Parent = NotifFrame
+		CloseButton.BorderSizePixel = 0
+	end
 
     CollapseButton.MouseButton1Click:Connect(Window.Collapse)
 
@@ -653,6 +722,8 @@ function UILibrary:ShowTestUI()
     TestSection2:CreateButton("nuh uh (dis)", function() end):SetDisabled(true)
     TestSection:CreateInputField("idk bro", "hihi", 9)
     TestSection2:CreateInputField("idk bro (dis)", "hihi", 9):SetDisabled(true)
+
+    MainWindow:Notify("Hello", "World")
 end
 
 if _G.UI_Debug then UILibrary:ShowTestUI() end
