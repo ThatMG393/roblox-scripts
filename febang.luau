@@ -1,4 +1,5 @@
 local MGUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/UI/MGUI.luau"))()
+local AnimationController = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/AnimationController.luau"))()
 local Players = game:GetService("Players")
 
 local function Main()
@@ -10,33 +11,30 @@ local function Main()
 	local MainWin = MGUI.CreateWindow(WinOpt)
 	
 	local MainSec = MainWin:CreateSection("Sex")
-	local TargetPlayer = MainSec:CreateInputField("Target Player", Players.LocalPlayer:GetFullName(), nil)
-	local Commence = MainSec:CreateButton("Commence 😈", function()
-		local TargetPlayer: Player = Players:FindFirstChild(TargetPlayer:GetText())
-		if TargetPlayer == nil then return end
+	local Status = MainSec:CreateLabel("you freaky 😈❓️")
+	local TargetPlayer = MainSec:CreateInputField("Target Player", Players.LocalPlayer:GetFullName().split(".")[2], nil)
+	local BangSpeed = MainSec:CreateInputField("Bang Speed", 2, 2)
 
-		local TargetPlayerHRP = TargetPlayer.Character:FindFirstChild("HumanoidRootPart")
-		local CurrentPlayer = Players.LocalPlayer
-		local CurrentHumanoid = CurrentPlayer.Character:WaitForChild("Humanoid")
-		local CurrentHRP = CurrentPlayer.Character:FindFirstChild("HumanoidRootPart")
+	local function redir(a) Status:UpdateLabel(a) end
 
-		local BangAnimSrc = Instance.new('Animation')
-		BangAnimSrc.AnimationId = 'rbxassetid://148840371'
-		
-		local BangAnimLoader = CurrentHumanoid:LoadAnimation(BangAnimSrc)
-		BangAnimLoader:Play()
-		BangAnimLoader:AdjustSpeed(2)
-
-		pcall(function()
-			CurrentHumanoid.Parent.Pants:Destroy()	
-			CurrentHumanoid.Parent.Shirt:Destroy()
-		end)
-
-		while CurrentHumanoid.Parent.Parent ~= nil do
-			wait()
-			local pos = TargetPlayerHRP.Position + TargetPlayerHRP.CFrame.LookVector * -1
-			CurrentHRP.CFrame = CFrame.new(pos, TargetPlayerHRP.Position)
+	local WeStoppingNow = false
+	local A = nil
+	MainSec:CreateButton("Commence 😈", function()
+		if WeStoppingNow then
+			A:Stop()
+			A = nil
+		else
+			A = AnimationController.new({
+				Speed = BangSpeed:GetText(),
+				R6AnimId = "rbxassetid://148840371",
+				R15AnimId = "rbxassetid://5918726674",
+				OnError = redir,
+				OnStatusChange = redir
+			})
+			A:Start()
+			A:FollowTarget(TargetPlayer:GetText())
 		end
+		WeStoppingNow = not WeStoppingNow
 	end)
 end
 
