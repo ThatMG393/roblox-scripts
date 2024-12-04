@@ -175,7 +175,7 @@ function UILibrary.CreateWindow(Options)
     local function UpdateTabButtonSizes()
     	local TabCount = #TabList
 
-		if TabCount >= 1 then
+		if TabCount > 1 then
             TabButtons.Visible = true
             TabContent.Size = UDim2.new(1, 0, 1, -30)
             TabContent.Position = UDim2.new(0, 0, 0, 30)
