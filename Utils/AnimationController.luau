@@ -64,7 +64,7 @@ function AnimationUtil:FollowTarget(targetName, offset)
     
     task.spawn(function()
         while self.Running do
-            self.LocalRoot.CFrame = targetRoot.CFrame * (offset or CFrame.new(0, 0, -1))
+            self.LocalRoot.CFrame = targetRoot.CFrame * offset
             task.wait()
         end
     end)

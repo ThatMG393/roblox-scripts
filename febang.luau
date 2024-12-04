@@ -32,7 +32,7 @@ local function Main()
 				OnStatusChange = redir
 			})
 			A:Start()
-			A:FollowTarget(TargetPlayer:GetText())
+			A:FollowTarget(TargetPlayer:GetText(), CFrame.new(0, 0, 1))
 		end
 		WeStoppingNow = not WeStoppingNow
 	end)
