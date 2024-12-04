@@ -256,7 +256,7 @@ function UILibrary.CreateWindow(Options)
 		Tab.Button = TabButton
 
 		local Elements = Instance.new("ScrollingFrame")
-		Elements.Name = "Elements"
+		Elements.Name = "Elements-" .. TabName
 		Elements.Size = UDim2.new(1, -20, 1, -20)
 		Elements.Position = UDim2.new(0, 10, 0, 10)
 		Elements.BackgroundTransparency = 1
@@ -644,15 +644,21 @@ function UILibrary.CreateWindow(Options)
 		return Tab
 	end
 
-	function Window:RemoveTab(Index)
+	function Window:RemoveTab(Index: number)
 		if #TabList == 1 then
 			return
 		end
 
-		TabList[Index - 1]:Select()
+		local TabAtIndex = table.remove(TabList, Index)
+		if TabAtIndex then
+			local TabButton = TabAtIndex.Button
+			TabButton.Button:Destroy()
+			TabContent:FindFirstChild("Element-"..TabButton.Button.Name, false)
 
-		table.remove(TabList, Index)
-		UpdateTabButtonSizes()
+			TabContent:Destroy()
+
+			UpdateTabButtonSizes()
+		end
 	end
 
 	function Window:CreateSection(SectionName)
