@@ -181,7 +181,7 @@ function UILibrary.CreateWindow(Options)
 			TabContent.Size = UDim2.new(1, 0, 1, -30)
 			TabContent.Position = UDim2.new(0, 0, 0, 30)
 		elseif TabCount <= 1 then
-			TabButtons.Visible = true
+			TabButtons.Visible = false 
 			TabContent.Size = UDim2.new(1, 0, 1, 0)
 			TabContent.Position = UDim2.new(0, 0, 0, 0)
 			return

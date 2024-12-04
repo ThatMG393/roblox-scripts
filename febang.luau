@@ -22,7 +22,7 @@ local function Main()
 	local WeStoppingNow = false
 	local A = nil
 	MainSec:CreateButton("Commence 😈", function()
-		if WeStoppingNow or A then
+		if WeStoppingNow or A ~= nil then
 			A:Stop()
 			A = nil
 			Status:UpdateLabel("stopped banging 😈")
@@ -34,7 +34,7 @@ local function Main()
 				OnError = redir,
 				OnStatusChange = redir,
 			}
-			if A then
+			if A ~= nil then
 				A:Start()
 				A:FollowTarget(TargetPlayer:GetText(), CFrame.new(0, 0, 1.1))
 				Status:UpdateLabel("we fucking now 😈😈😈")
