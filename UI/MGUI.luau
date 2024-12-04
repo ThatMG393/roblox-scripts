@@ -196,7 +196,7 @@ function UILibrary.CreateWindow(Options)
 		TabButtons.ScrollingEnabled = TotalRequiredWidth > TotalWidth
 		TabButtons.ScrollBarThickness = TabButtons.ScrollingEnabled and 1 or 0
 
-		if not TabButtons.ScrollingEnabled then
+		if not (TotalRequiredWidth > TotalWidth) then
 			for _, tab in ipairs(TabList) do
 				TweenService:Create(tab.Button, AnimationOpts, { Size = UDim2.new(0, CalculatedButtonWidth, 0, 30), }):Play()
 			end
@@ -244,7 +244,7 @@ function UILibrary.CreateWindow(Options)
 
 		local TabButton = Instance.new("TextButton")
 		TabButton.Name = TabName
-		TabButton.Size = UDim2.new(0, 100, 0, 30)
+		TabButton.Size = UDim2.new(0, 120, 0, 30)
 		TabButton.BackgroundColor3 = CurrentTheme.AboveBackground
 		TabButton.Text = TabName
 		TabButton.TextColor3 = CurrentTheme.TextColor
@@ -646,17 +646,17 @@ function UILibrary.CreateWindow(Options)
 
 	function Window:RemoveTab(Index: number)
 		if #TabList == 1 or Index <= 0 or Index > #TabList then
+			UpdateTabButtonSizes()
 			return
 		end
 
 		local TabAtIndex = table.remove(TabList, Index)
 		if TabAtIndex then
 			local TabButton = TabAtIndex.Button
+			local TabElement = TabContent["Elements-"..TabButton.Name] -- no need to find cus it always exists
+
 			TabButton:Destroy()
-			local TabElements = TabContent:FindFirstChild("Element-"..TabButton.Button.Name, false)
-			if TabElements then
-				TabElements:Destroy()
-			end
+			TabElement:Destroy()
 
 			UpdateTabButtonSizes()
 		end
@@ -707,6 +707,10 @@ function UILibrary.CreateWindow(Options)
 		CloseButton.BorderSizePixel = 0
 	end
 
+	function Window:GetTabCount()
+		return #TabList
+	end
+
 	CollapseButton.MouseButton1Click:Connect(Window.Collapse)
 
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))():MakeDraggableFromWithAnim(0.10, TitleBar, MainFrame)
@@ -717,8 +721,6 @@ function UILibrary.CreateWindow(Options)
 end
 
 function UILibrary:ShowTestUI()
-	local i = 0
-
 	local Opts = UILibrary.DefaultWindowOptions
 	Opts.WindowTitle = "MGUI Test UI"
 
@@ -734,13 +736,14 @@ function UILibrary:ShowTestUI()
 	end)
 
 	MainSection:CreateButton("New tab-uh", function()
-		MainWindow:CreateTab("Newtab-uh #" .. i)
-		i = i + 1
+		MainWindow:CreateTab("Newtab-uh #" .. MainWindow:GetTabCount() + 1)
 	end)
 
 	MainSection:CreateButton("Remove tab-uh", function()
-		MainWindow:RemoveTab(i)
-		i = i - 1
+		if MainWindow:GetTabCount() <= 2 then
+			return
+		end
+		MainWindow:RemoveTab(MainWindow:GetTabCount())
 	end)
 
 	local TestTab = MainWindow:CreateTab("More tests tab")
