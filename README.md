@@ -1,5 +1,10 @@
 # roblox-scripts
 
+## febang
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/febang.luau"))()
+```
+
 ## autolowplayer
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/autolowplayer.luau"))()
@@ -13,6 +18,6 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scri
 
 ## MGUI
 ```lua
--- _G.UI_Debug = true -- ui debug
+-- _G.UI_Debug = true -- test ui
 loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/UI/MGUI.luau"))()
 ```
