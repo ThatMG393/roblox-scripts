@@ -63,8 +63,7 @@ end
 
 function GetGui()
 	local Player = PlayersService.LocalPlayer
-	local ScreenGui = Player:WaitForChild("PlayerGui", 5):FindFirstChild("Toasts")
-		or Instance.new("ScreenGui", Player.PlayerGui)
+	local ScreenGui = Player:WaitForChild("PlayerGui", 5):FindFirstChild("Toasts") or Instance.new("ScreenGui", Player.PlayerGui)
 
 	ScreenGui.DisplayOrder = 2147483647
 	ScreenGui.Name = "Toasts"

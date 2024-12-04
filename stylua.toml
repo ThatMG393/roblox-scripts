@@ -2,6 +2,7 @@ syntax = "Luau"
 indent_type = "Tabs"
 call_parentheses = "NoSingleTable"
 space_after_function_names = "Never"
+column_width = 99999
 
 [sort_requires]
 enabled = true

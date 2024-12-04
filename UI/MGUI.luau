@@ -4,8 +4,7 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
-local ColorUtil =
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/ColorUtil.luau"))()
+local ColorUtil = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/ColorUtil.luau"))()
 
 UILibrary.Themes = {
 	Dark = {
@@ -52,8 +51,7 @@ end
 function UILibrary.CreateWindow(Options)
 	Options = Options or UILibrary.DefaultWindowOptions
 
-	local UserInterface =
-		Players.LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("UILibrary-" .. Options.WindowTitle, false)
+	local UserInterface = Players.LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("UILibrary-" .. Options.WindowTitle, false)
 	if UserInterface then
 		UserInterface:Destroy()
 	end
@@ -391,24 +389,19 @@ function UILibrary.CreateWindow(Options)
 
 				function Button:SetDisabled(State)
 					self.Disabled = State
-					self.UI.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Background)
-						or CurrentTheme.AboveBackground
-					self.UI.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor)
-						or CurrentTheme.TextColor
+					self.UI.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Background) or CurrentTheme.AboveBackground
+					self.UI.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor) or CurrentTheme.TextColor
 				end
 
 				Button.UI.MouseEnter:Connect(function()
 					TweenService:Create(Button.UI, TweenInfo.new(0.2), {
-						BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Secondary)
-							or CurrentTheme.Secondary,
+						BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Secondary) or CurrentTheme.Secondary,
 					}):Play()
 				end)
 
 				Button.UI.MouseLeave:Connect(function()
 					TweenService:Create(Button.UI, TweenInfo.new(0.2), {
-						BackgroundColor3 = self.Disabled
-								and ColorUtil.GetDisabledColor(CurrentTheme.AboveBackground)
-							or CurrentTheme.AboveBackground,
+						BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.AboveBackground) or CurrentTheme.AboveBackground,
 					}):Play()
 				end)
 
@@ -458,16 +451,9 @@ function UILibrary.CreateWindow(Options)
 
 				function Toggle:SetDisabled(State)
 					self.Disabled = State
-					self.UI.BackgroundColor3 = self.Disabled
-							and ColorUtil.GetDisabledColor(CurrentTheme.AboveBackground)
-						or CurrentTheme.AboveBackground
-					Label.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor)
-						or CurrentTheme.TextColor
-					ToggleButton.BackgroundColor3 = self.Disabled
-							and ColorUtil.GetDisabledColor(
-								Toggle.State and CurrentTheme.Primary or CurrentTheme.Background
-							)
-						or (Toggle.State and CurrentTheme.Primary or CurrentTheme.Background)
+					self.UI.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.AboveBackground) or CurrentTheme.AboveBackground
+					Label.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor) or CurrentTheme.TextColor
+					ToggleButton.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(Toggle.State and CurrentTheme.Primary or CurrentTheme.Background) or (Toggle.State and CurrentTheme.Primary or CurrentTheme.Background)
 				end
 
 				function Toggle:SetState(State)
@@ -491,16 +477,13 @@ function UILibrary.CreateWindow(Options)
 
 				Toggle.UI.MouseEnter:Connect(function()
 					TweenService:Create(Toggle.UI, TweenInfo.new(0.2), {
-						BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Secondary)
-							or CurrentTheme.Secondary,
+						BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Secondary) or CurrentTheme.Secondary,
 					}):Play()
 				end)
 
 				Toggle.UI.MouseLeave:Connect(function()
 					TweenService:Create(Toggle.UI, TweenInfo.new(0.2), {
-						BackgroundColor3 = self.Disabled
-								and ColorUtil.GetDisabledColor(CurrentTheme.AboveBackground)
-							or CurrentTheme.AboveBackground,
+						BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.AboveBackground) or CurrentTheme.AboveBackground,
 					}):Play()
 				end)
 
@@ -561,27 +544,17 @@ function UILibrary.CreateWindow(Options)
 
 				function Slider:SetDisabled(State)
 					self.Disabled = State
-					self.UI.BackgroundColor3 = self.Disabled
-							and ColorUtil.GetDisabledColor(CurrentTheme.AboveBackground)
-						or CurrentTheme.AboveBackground
-					Label.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor)
-						or CurrentTheme.TextColor
-					ValueLabel.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor)
-						or CurrentTheme.TextColor
-					SliderBar.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Secondary)
-						or CurrentTheme.Secondary
-					Fill.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Primary)
-						or CurrentTheme.Primary
+					self.UI.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.AboveBackground) or CurrentTheme.AboveBackground
+					Label.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor) or CurrentTheme.TextColor
+					ValueLabel.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor) or CurrentTheme.TextColor
+					SliderBar.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Secondary) or CurrentTheme.Secondary
+					Fill.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Primary) or CurrentTheme.Primary
 				end
 
 				function Slider:SetPercentage(Percentage: number)
 					local SliderValue = math.floor(math.clamp(Percentage, MinValue, MaxValue))
 
-					TweenService:Create(
-						Fill,
-						TweenInfo.new(0.2, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out),
-						{ Size = UDim2.new(SliderValue / 100, 0, 1, 0) }
-					):Play()
+					TweenService:Create(Fill, TweenInfo.new(0.2, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), { Size = UDim2.new(SliderValue / 100, 0, 1, 0) }):Play()
 					ValueLabel.Text = tostring(SliderValue)
 
 					Callback(SliderValue)
@@ -591,19 +564,10 @@ function UILibrary.CreateWindow(Options)
 					if self.Disabled then
 						return
 					end
-					if
-						Input.UserInputType == Enum.UserInputType.MouseButton1
-						or Input.UserInputType == Enum.UserInputType.Touch and not Slider.Disabled
-					then
+					if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch and not Slider.Disabled then
 						local Connection
 						Connection = RunService.RenderStepped:Connect(function()
-							Slider:SetPercentage(
-								MinValue
-									+ (
-										(MaxValue - MinValue)
-										* ((Input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X)
-									)
-							)
+							Slider:SetPercentage(MinValue + ((MaxValue - MinValue) * ((Input.Position.X - SliderBar.AbsolutePosition.X) / SliderBar.AbsoluteSize.X)))
 						end)
 
 						Input.Changed:Connect(function()
@@ -655,18 +619,11 @@ function UILibrary.CreateWindow(Options)
 				function InputField:SetDisabled(State)
 					self.Disabled = State
 					TextBox.Active = not State
-					self.UI.BackgroundColor3 = self.Disabled
-							and ColorUtil.GetDisabledColor(CurrentTheme.AboveBackground)
-						or CurrentTheme.AboveBackground
-					TextLabel.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor)
-						or CurrentTheme.TextColor
-					TextBox.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor)
-						or CurrentTheme.TextColor
-					TextBox.PlaceholderColor3 = self.Disabled
-							and ColorUtil.GetDisabledColor(CurrentTheme.PlaceholderColor)
-						or CurrentTheme.PlaceholderColor
-					TextBox.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Background)
-						or CurrentTheme.Background
+					self.UI.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.AboveBackground) or CurrentTheme.AboveBackground
+					TextLabel.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor) or CurrentTheme.TextColor
+					TextBox.TextColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.TextColor) or CurrentTheme.TextColor
+					TextBox.PlaceholderColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.PlaceholderColor) or CurrentTheme.PlaceholderColor
+					TextBox.BackgroundColor3 = self.Disabled and ColorUtil.GetDisabledColor(CurrentTheme.Background) or CurrentTheme.Background
 				end
 
 				function InputField:SetText(NewText)
@@ -739,9 +696,7 @@ function UILibrary.CreateWindow(Options)
 
 	CollapseButton.MouseButton1Click:Connect(Window.Collapse)
 
-	loadstring(
-		game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau")
-	)():MakeDraggableFromWithAnim(0.10, TitleBar, MainFrame)
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))():MakeDraggableFromWithAnim(0.10, TitleBar, MainFrame)
 
 	MainFrame.Visible = true
 

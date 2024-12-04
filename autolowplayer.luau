@@ -5,21 +5,14 @@ local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local TweenService = game:GetService("TweenService")
 
-local TextResizer = loadstring(
-	game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/TextResizer.luau")
-)()
+local TextResizer = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/TextResizer.luau"))()
 
 local SERVERS_PER_PAGE = 100
 local MAX_PAGES = 3
 
 function ServerHopper:FindServer(minPlayer, maxPlayer, minPing, maxPing)
 	local function GetServersAPI(cursor)
-		local url = string.format(
-			"https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=%d%s",
-			game.PlaceId,
-			SERVERS_PER_PAGE,
-			cursor and "&cursor=" .. cursor or ""
-		)
+		local url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=%d%s", game.PlaceId, SERVERS_PER_PAGE, cursor and "&cursor=" .. cursor or "")
 
 		print(url)
 		return HttpService:JSONDecode(game:HttpGet(url))
@@ -28,12 +21,7 @@ function ServerHopper:FindServer(minPlayer, maxPlayer, minPing, maxPing)
 	local function FilterServers()
 		local function FilterServersInternal(servers)
 			for _, server in ipairs(servers) do
-				if
-					server.playing >= minPlayer
-					and server.playing <= maxPlayer
-					and server.ping >= minPing
-					and server.ping <= maxPing
-				then
+				if server.playing >= minPlayer and server.playing <= maxPlayer and server.ping >= minPing and server.ping <= maxPing then
 					return { serverInfo = server }
 				end
 			end
@@ -243,9 +231,7 @@ function ServerHopper:InitUI()
 	UISizeConstraint.MaxSize = Vector2.new(400, 600)
 	UISizeConstraint.Parent = Container
 
-	local MakeDraggable = loadstring(
-		game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau")
-	)()
+	local MakeDraggable = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))()
 	MakeDraggable:MakeDraggable(MainFrame)
 	TextResizer:AutoResizeTexts(MainFrame)
 
@@ -309,12 +295,7 @@ function ServerHopper:HandleUI()
 		ui.teleportButton:SetDisabled(true)
 		updateStatus("Searching for server...", false)
 
-		local result = ServerHopper:FindServer(
-			tonumber(ui.minPlayersInput.Text),
-			tonumber(ui.maxPlayersInput.Text),
-			tonumber(ui.minPingInput.Text),
-			tonumber(ui.maxPingInput.Text)
-		)
+		local result = ServerHopper:FindServer(tonumber(ui.minPlayersInput.Text), tonumber(ui.maxPlayersInput.Text), tonumber(ui.minPingInput.Text), tonumber(ui.maxPingInput.Text))
 
 		searching = false
 		ui.searchButton.UI.Text = "Retry"

@@ -10,8 +10,7 @@ function M:MakeDraggableFromWithAnim(animDelay: number, inputRecv: GuiObject, gu
 
 	local function update(input)
 		local delta = input.Position - dragStart
-		local Position =
-			UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+		local Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 
 		if animDelay > 0 then
 			game:GetService("TweenService")
@@ -25,10 +24,7 @@ function M:MakeDraggableFromWithAnim(animDelay: number, inputRecv: GuiObject, gu
 	end
 
 	inputRecv.InputBegan:Connect(function(input)
-		if
-			input.UserInputType == Enum.UserInputType.MouseButton1
-			or input.UserInputType == Enum.UserInputType.Touch
-		then
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			dragging = true
 			dragStart = input.Position
 			startPos = guiToMove.Position
@@ -42,10 +38,7 @@ function M:MakeDraggableFromWithAnim(animDelay: number, inputRecv: GuiObject, gu
 	end)
 
 	inputRecv.InputChanged:Connect(function(input)
-		if
-			input.UserInputType == Enum.UserInputType.MouseMovement
-			or input.UserInputType == Enum.UserInputType.Touch
-		then
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 			dragInput = input
 		end
 	end)
