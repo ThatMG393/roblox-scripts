@@ -652,10 +652,11 @@ function UILibrary.CreateWindow(Options)
 		local TabAtIndex = table.remove(TabList, Index)
 		if TabAtIndex then
 			local TabButton = TabAtIndex.Button
-			TabButton.Button:Destroy()
-			TabContent:FindFirstChild("Element-"..TabButton.Button.Name, false)
-
-			TabContent:Destroy()
+			TabButton:Destroy()
+			local TabElements = TabContent:FindFirstChild("Element-"..TabButton.Button.Name, false)
+			if TabElements then
+				TabElements:Destroy()
+			end
 
 			UpdateTabButtonSizes()
 		end
