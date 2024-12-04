@@ -645,7 +645,7 @@ function UILibrary.CreateWindow(Options)
 	end
 
 	function Window:RemoveTab(Index: number)
-		if #TabList == 1 then
+		if #TabList == 1 or Index <= 0 or Index > #TabList then
 			return
 		end
 
