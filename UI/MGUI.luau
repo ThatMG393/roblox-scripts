@@ -180,10 +180,11 @@ function UILibrary.CreateWindow(Options)
 			TabButtons.Visible = true
 			TabContent.Size = UDim2.new(1, 0, 1, -30)
 			TabContent.Position = UDim2.new(0, 0, 0, 30)
-		else
-			if TabCount <= 1 then
-				return
-			end
+		elseif TabCount <= 1 then
+			TabButtons.Visible = true
+			TabContent.Size = UDim2.new(1, 0, 1, 0)
+			TabContent.Position = UDim2.new(0, 0, 0, 0)
+			return
 		end
 
 		local AnimationOpts = TweenInfo.new(0.40, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
@@ -195,8 +196,10 @@ function UILibrary.CreateWindow(Options)
 		TabButtons.ScrollingEnabled = TotalRequiredWidth > TotalWidth
 		TabButtons.ScrollBarThickness = TabButtons.ScrollingEnabled and 1 or 0
 
-		for _, tab in ipairs(TabList) do
-			TweenService:Create(tab.Button, AnimationOpts, { Size = UDim2.new(0, CalculatedButtonWidth, 0, 30) }):Play()
+		if not TabButtons.ScrollingEnabled then
+			for _, tab in ipairs(TabList) do
+				TweenService:Create(tab.Button, AnimationOpts, { Size = UDim2.new(0, CalculatedButtonWidth, 0, 30), }):Play()
+			end
 		end
 	end
 
@@ -217,22 +220,14 @@ function UILibrary.CreateWindow(Options)
 		local TargetTitleHeight = IsCollapsed and 24 or 30
 		local TargetTextSize = IsCollapsed and 14 or 16
 
-		TweenService:Create(MainFrame, AnimationInfo, {
-			Size = UDim2.new(0, TargetWidth, 0, TargetHeight),
-		}):Play()
+		TweenService:Create(MainFrame, AnimationInfo, { Size = UDim2.new(0, TargetWidth, 0, TargetHeight), }):Play()
+		TweenService:Create(TitleBar, AnimationInfo, { Size = UDim2.new(1, 0, 0, TargetTitleHeight), }):Play()
+		TweenService:Create(TitleText, AnimationInfo, { TextSize = TargetTextSize, }):Play()
 
-		TweenService:Create(TitleBar, AnimationInfo, {
-			Size = UDim2.new(1, 0, 0, TargetTitleHeight),
-		}):Play()
+		local CollapseAnim = TweenService:Create(CollapseButton, AnimationInfo, { Rotation = CollapseButton.Rotation + 180, })
 
-		TweenService:Create(TitleText, AnimationInfo, { TextSize = TargetTextSize }):Play()
-
-		local tmp = TweenService:Create(CollapseButton, AnimationInfo, {
-			Rotation = CollapseButton.Rotation + 180,
-		})
-
-		tmp:Play()
-		tmp.Completed:Connect(function()
+		CollapseAnim:Play()
+		CollapseAnim.Completed:Connect(function()
 			CollapseButton.Rotation = CollapseButton.Rotation >= 360 and 0 or CollapseButton.Rotation
 			IsCollapsing = false
 		end)
@@ -649,6 +644,17 @@ function UILibrary.CreateWindow(Options)
 		return Tab
 	end
 
+	function Window:RemoveTab(Index)
+		if #TabList == 1 then
+			return
+		end
+
+		TabList[Index - 1]:Select()
+
+		table.remove(TabList, Index)
+		UpdateTabButtonSizes()
+	end
+
 	function Window:CreateSection(SectionName)
 		if #TabList == 0 then
 			local MainTab = Window:CreateTab("Main")
@@ -709,7 +715,7 @@ function UILibrary:ShowTestUI()
 	local Opts = UILibrary.DefaultWindowOptions
 	Opts.WindowTitle = "MGUI Test UI"
 
-	local MainWindow = UILibrary.CreateWindow()
+	local MainWindow = UILibrary.CreateWindow(Opts)
 	local MainSection = MainWindow:CreateSection("Test section")
 	MainSection:CreateToggle("hello", true, function(State)
 		print("damn")
@@ -723,6 +729,11 @@ function UILibrary:ShowTestUI()
 	MainSection:CreateButton("New tab-uh", function()
 		MainWindow:CreateTab("Newtab-uh #" .. i)
 		i = i + 1
+	end)
+
+	MainSection:CreateButton("Remove tab-uh", function()
+		MainWindow:RemoveTab(i)
+		i = i - 1
 	end)
 
 	local TestTab = MainWindow:CreateTab("More tests tab")
