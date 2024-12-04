@@ -1,4 +1,4 @@
-local M = { }
+local M = {}
 
 function M:MouseButton1ClickConnect(frame: Frame, callback)
 	local hovered
@@ -12,10 +12,14 @@ function M:MouseButton1ClickConnect(frame: Frame, callback)
 	end)
 
 	game:GetService("UserInputService").InputEnded:Connect(function(input: InputObject, gameProcessed: boolean)
-		if table.find({
-			Enum.UserInputType.MouseButton1,
-			Enum.UserInputType.Touch
-		}, input.UserInputType) and hovered then callback() end
+		if
+			table.find({
+				Enum.UserInputType.MouseButton1,
+				Enum.UserInputType.Touch,
+			}, input.UserInputType) and hovered
+		then
+			callback()
+		end
 	end)
 end
 

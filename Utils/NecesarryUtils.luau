@@ -1,4 +1,4 @@
-local Utils = { }
+local Utils = {}
 
 function Utils.IsNil(obj)
 	return (obj == nil)

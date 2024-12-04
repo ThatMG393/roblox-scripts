@@ -1,37 +1,39 @@
 local GHRepo = "https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master"
 
-local HttpService = game:GetService('HttpService')
-local Players = game:GetService('Players')
-local RunService = game:GetService('RunService')
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
 local Fluent = loadstring(game:HttpGet(GHRepo .. "/UI/fluent-ui.lua"))()
 local ThreadLib = loadstring(game:HttpGet(GHRepo .. "/Utils/ThreadLib.luau"))()
 local UtilLib = loadstring(game:HttpGet(GHRepo .. "/Utils/NecesarryUtils.luau"))()
 
-local MainWin = Fluent:CreateWindow({
+local MainWin = Fluent:CreateWindow {
 	Title = "Blox Fruits | ThatMG393",
 	TabWidth = 160,
 	Size = UDim2.fromOffset(580, 460),
 	Acrylic = true,
-	Theme = "Dark"
-})
+	Theme = "Dark",
+}
 
 --------------------INFORMATION---------------------
 
-local InformationTab = MainWin:AddTab({
-	Title = "Information", Icon = "info"
-})
+local InformationTab = MainWin:AddTab {
+	Title = "Information",
+	Icon = "info",
+}
 
-local PlayersLabel = InformationTab:AddParagraph({
+local PlayersLabel = InformationTab:AddParagraph {
 	Title = "Developers",
-	Content = "ThatMG393"
-})
+	Content = "ThatMG393",
+}
 
 --------------------COMBAT--------------------
 
-local CombatTab = MainWin:AddTab({
-	Title = "Combat", Icon = "swords"
-})
+local CombatTab = MainWin:AddTab {
+	Title = "Combat",
+	Icon = "swords",
+}
 
 local PlayerSection = CombatTab:AddSection("Player")
 
@@ -51,10 +53,10 @@ local PlayersDropdown = PlayerSection:AddDropdown("Dropdown", {
 	Title = "Select Player",
 	Values = BuildPlayerDropdown(),
 	Multi = false,
-	Default = 1
+	Default = 1,
 })
 
-PlayersDropdown:OnChanged(function (selected)	
+PlayersDropdown:OnChanged(function(selected)
 	if selected == "" then
 		SelectedPlayer = nil
 	else
@@ -62,12 +64,12 @@ PlayersDropdown:OnChanged(function (selected)
 	end
 end)
 
-PlayerSection:AddButton({
+PlayerSection:AddButton {
 	Title = "Refresh",
-	Callback = function ()
+	Callback = function()
 		PlayersDropdown:SetValues(BuildPlayerDropdown())
-	end 
-})
+	end,
+}
 
 local ESPSection = CombatTab:AddSection("ESP")
 
@@ -76,7 +78,7 @@ local function HighlightAPlayer(player: Player)
 
 	if PlayerCharacter then
 		if not PlayerCharacter:FindFirstChildWhichIsA("Highlight") then
-			local Highlight = Instance.new("Highlight")	
+			local Highlight = Instance.new("Highlight")
 			Highlight.FillColor = Color3.new(1, 0, 0)
 			Highlight.Parent = PlayerCharacter
 		end
@@ -106,27 +108,27 @@ local function UnhighlightAllPlayers()
 	end
 end
 
-ESPSection:AddToggle({
+ESPSection:AddToggle {
 	Title = "ESP Players",
-	Callback = function (state)
+	Callback = function(state)
 		if state then
 			HighlightAllPlayers()
 		else
 			UnhighlightAllPlayers()
 		end
-	end
-})
+	end,
+}
 
-ESPSection:AddToggle({
+ESPSection:AddToggle {
 	Title = "ESP Selected",
-	Callback = function (state)
+	Callback = function(state)
 		if state then
 			UnhighlightAllPlayers()
-			if SelectedPlayer then HighlightAPlayer(SelectedPlayer) end
+			if SelectedPlayer then
+				HighlightAPlayer(SelectedPlayer)
+			end
 		else
 			UnhighlightAllPlayers()
 		end
-	end
-})
-
-
+	end,
+}

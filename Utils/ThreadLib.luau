@@ -1,9 +1,9 @@
-local ThreadLib = { }
+local ThreadLib = {}
 
 function ThreadLib.NewThread(func)
 	local Thread = {
 		CoroFunc = func,
-		Coroutine = nil
+		Coroutine = nil,
 	}
 
 	function Thread.Start()
@@ -12,7 +12,9 @@ function ThreadLib.NewThread(func)
 	end
 
 	function Thread.Stop()
-		if Thread.Coroutine == nil then return end
+		if Thread.Coroutine == nil then
+			return
+		end
 		return coroutine.yield(Thread.Coroutine)
 	end
 

@@ -4,14 +4,14 @@ function M:AutoResizeTexts(element: Instance)
 	local minYFactor
 
 	for _, container in element:GetChildren() do
-		if not container:IsA('TextLabel') then
+		if not container:IsA("TextLabel") then
 			continue
 		end
 
 		local isDoneCalculatingTextBounds = container.TextBounds ~= Vector2.zero
 
 		if not isDoneCalculatingTextBounds then
-			container:GetPropertyChangedSignal('TextBounds'):Wait()
+			container:GetPropertyChangedSignal("TextBounds"):Wait()
 		end
 
 		local yAxisFactor = container.TextBounds.Y / container.AbsoluteSize.Y
@@ -21,7 +21,7 @@ function M:AutoResizeTexts(element: Instance)
 	end
 
 	for _, child in element:GetChildren() do
-		if not child:IsA('TextLabel') then
+		if not child:IsA("TextLabel") then
 			continue
 		end
 
@@ -30,7 +30,7 @@ function M:AutoResizeTexts(element: Instance)
 		end
 
 		child.TextScaled = false
-		child:GetPropertyChangedSignal('AbsoluteSize'):Connect(handleChildChanged)
+		child:GetPropertyChangedSignal("AbsoluteSize"):Connect(handleChildChanged)
 		handleChildChanged()
 	end
 end

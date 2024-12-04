@@ -1,0 +1,8 @@
+syntax = "Luau"
+indent_type = "Tabs"
+call_parentheses = "NoSingleTable"
+space_after_function_names = "Never"
+
+[sort_requires]
+enabled = true
+

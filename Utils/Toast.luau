@@ -1,11 +1,11 @@
-local PlayersService = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-local SoundService = game:GetService("SoundService")
 local DebrisService = game:GetService("Debris")
+local PlayersService = game:GetService("Players")
+local SoundService = game:GetService("SoundService")
+local TweenService = game:GetService("TweenService")
 
-local Toast = { }
+local Toast = {}
 local MAX_TOASTS = 5 -- Maximum number of toasts displayed at one time
-local activeToasts = { } -- Table to store active toast instances
+local activeToasts = {} -- Table to store active toast instances
 
 function AnimateToast(toast, anim)
 	-- Notification sound
@@ -18,20 +18,20 @@ function AnimateToast(toast, anim)
 	local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, false, 0)
 	local open = anim == "open"
 
-	local imgParams = {ImageTransparency = open and 0 or 1}
-	local txtParams = {TextTransparency = open and 0 or 1}
+	local imgParams = { ImageTransparency = open and 0 or 1 }
+	local txtParams = { TextTransparency = open and 0 or 1 }
 
 	if sound.Loaded then
 		sound:Play()
 	end
-	
+
 	local toastSize = open and UDim2.new(0, 326, 0, 58) or UDim2.new(0, 0, 0, 0)
 	local imgTransparency = open and 0.4 or 1
 
 	local iconTween = TweenService:Create(toast.IconBuffer.Icon, tweenInfo, imgParams)
 	local upperTextTween = TweenService:Create(toast.TextBuffer.Upper, tweenInfo, txtParams)
 	local lowerTextTween = TweenService:Create(toast.TextBuffer.Lower, tweenInfo, txtParams)
-	local toastTween = TweenService:Create(toast, tweenInfo, {Size = toastSize, ImageTransparency = imgTransparency})
+	local toastTween = TweenService:Create(toast, tweenInfo, { Size = toastSize, ImageTransparency = imgTransparency })
 
 	toastTween:Play()
 	iconTween:Play()
@@ -42,7 +42,7 @@ function AnimateToast(toast, anim)
 		-- Add the toast to debris for removal
 		DebrisService:AddItem(toast, 0.25)
 		activeToasts[toast] = nil -- Remove the toast from active toasts
-		
+
 		-- Create a new array with remaining toasts
 		local remainingToasts = {}
 		for toast in pairs(activeToasts) do
@@ -50,7 +50,9 @@ function AnimateToast(toast, anim)
 		end
 
 		-- Sort the array based on LayoutOrder
-		table.sort(remainingToasts, function(a, b) return a.LayoutOrder < b.LayoutOrder end)
+		table.sort(remainingToasts, function(a, b)
+			return a.LayoutOrder < b.LayoutOrder
+		end)
 
 		-- Rearrange LayoutOrder values of the remaining toasts
 		for i, t in ipairs(remainingToasts) do
@@ -61,14 +63,15 @@ end
 
 function GetGui()
 	local Player = PlayersService.LocalPlayer
-	local ScreenGui = Player:WaitForChild("PlayerGui", 5):FindFirstChild("Toasts") or Instance.new("ScreenGui", Player.PlayerGui)
+	local ScreenGui = Player:WaitForChild("PlayerGui", 5):FindFirstChild("Toasts")
+		or Instance.new("ScreenGui", Player.PlayerGui)
 
 	ScreenGui.DisplayOrder = 2147483647
 	ScreenGui.Name = "Toasts"
 	ScreenGui.IgnoreGuiInset = true
 
 	if ScreenGui:FindFirstChild("ToastFrame") then
-		return ScreenGui:FindFirstChild("ToastFrame") 
+		return ScreenGui:FindFirstChild("ToastFrame")
 	else
 		local Frame = Instance.new("Frame", screenGui)
 		Frame.BackgroundTransparency = 1
@@ -114,22 +117,22 @@ Toast.CreateToast = function(ToastId, TopText, BottomText, IconId, IconColor, Di
 		return {
 			CancelToast = function()
 				AnimateToast(newToast, "cancel")
-			end;
+			end,
 
 			DestroyToast = function(delaytime)
 				DebrisService:AddItem(newToast, delaytime or 0)
-			end;
+			end,
 
 			HideToast = function()
 				newToast.Visible = false
-			end;
+			end,
 
 			ShowToast = function()
 				newToast.Visible = true
-			end;
+			end,
 		}
 	else
-		return {CancelToast = empty(), DestroyToast = empty(), HideToast = empty(), ShowToast = empty()}
+		return { CancelToast = empty(), DestroyToast = empty(), HideToast = empty(), ShowToast = empty() }
 	end
 end
 
@@ -145,22 +148,22 @@ Toast.GetToast = function(id)
 		return {
 			CancelToast = function()
 				AnimateToast(toast, "cancel")
-			end;
+			end,
 
 			DestroyToast = function(delaytime)
 				DebrisService:AddItem(toast, delaytime or 0)
-			end;
+			end,
 
 			HideToast = function()
 				toast.Visible = false
-			end;
+			end,
 
 			ShowToast = function()
 				toast.Visible = true
-			end;
+			end,
 		}
 	else
-		return {CancelToast = empty(), DestroyToast = empty(), HideToast = empty(), ShowToast = empty()}
+		return { CancelToast = empty(), DestroyToast = empty(), HideToast = empty(), ShowToast = empty() }
 	end
 end
 
@@ -196,7 +199,9 @@ function CheckMaxToasts()
 	end
 
 	-- Sort children by LayoutOrder
-	table.sort(children, function(a, b) return a.LayoutOrder < b.LayoutOrder end)
+	table.sort(children, function(a, b)
+		return a.LayoutOrder < b.LayoutOrder
+	end)
 
 	while #children > MAX_TOASTS do
 		AnimateToast(children[1], "cancel")
