@@ -59,9 +59,18 @@ end
 function AnimationUtil:FollowTarget(targetName, offset)
     local target = Players:FindFirstChild(targetName)
     if not target or not target.Character then return end
-    
+   	
+   	local targetHumanoid = target.Character:WaitForChild("Humanoid")
     local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
-    if not targetRoot then return end
+    if not targetRoot or not targetHumanoid then return end
+
+    targetHumanoid.Died:Connect(function()
+		self:Stop()
+    end)
+
+    self.LocalHumanoid.Died:Connect(function()
+    	self:Stop()
+    end)
     
     task.spawn(function()
         while self.Running do

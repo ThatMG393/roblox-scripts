@@ -5,7 +5,7 @@ local Players = game:GetService("Players")
 local function Main()
 	local WinOpt = MGUI.DefaultWindowOptions
 	WinOpt.WindowTitle = "Simple Sex GUI"
-	WinOpt.WindowSize = { X = 317, Y = 271 }
+	WinOpt.WindowSize = { X = 317, Y = 280 }
 	WinOpt.ResetOnSpawn = false
 
 	local MainWin = MGUI.CreateWindow(WinOpt)
@@ -13,7 +13,7 @@ local function Main()
 	local MainSec = MainWin:CreateSection("Sex")
 	local Status = MainSec:CreateLabel("you freaky 😈❓️")
 	local TargetPlayer = MainSec:CreateInputField("Target Player", Players.LocalPlayer:GetFullName().split(".")[2], nil)
-	local BangSpeed = MainSec:CreateInputField("Bang Speed", 2, 2)
+	local BangSpeed = MainSec:CreateInputField("Bang Speed", 10, 10)
 
 	local function redir(a) Status:UpdateLabel(a) end
 
@@ -34,7 +34,7 @@ local function Main()
 			})
 			if A then
 				A:Start()
-				A:FollowTarget(TargetPlayer:GetText(), CFrame.new(0, 0.1, 1.2))
+				A:FollowTarget(TargetPlayer:GetText(), CFrame.new(0, 0, 1.1))
 				Status:UpdateLabel("we fucking now 😈😈😈")
 			end
 		end
