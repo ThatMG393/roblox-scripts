@@ -19,10 +19,11 @@ function AnimationUtil.new(config)
         OnStatusChange = config.OnStatusChange or function() end,
         R6AnimId = config.R6AnimId,
         R15AnimId = config.R15AnimId,
-        LocalHumanoid = localChar:WaitForChild("Humanoid")
+        LocalHumanoid = localChar:WaitForChild("Humanoid"),
+        LocalRoot = localChar:FindFirstChild("HumanoidRootPart")
     }, AnimationUtil)
     
-    if not (self.LocalHumanoid) then
+    if not (self.LocalHumanoid and self.LocalRoot) then
         config.OnError("Required instances not found")
         return nil
     end
