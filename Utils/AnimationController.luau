@@ -19,11 +19,10 @@ function AnimationUtil.new(config)
         OnStatusChange = config.OnStatusChange or function() end,
         R6AnimId = config.R6AnimId,
         R15AnimId = config.R15AnimId,
-        LocalHumanoid = localChar:WaitForChild("Humanoid"),
-        LocalRoot = localChar:FindFirstChild("HumanoidRootPart")
+        LocalHumanoid = localChar:WaitForChild("Humanoid")
     }, AnimationUtil)
     
-    if not (self.LocalHumanoid and self.LocalRoot) then
+    if not (self.LocalHumanoid) then
         config.OnError("Required instances not found")
         return nil
     end
@@ -37,7 +36,7 @@ function AnimationUtil:_LoadAnimation()
     
     local animation = Instance.new('Animation')
     animation.AnimationId = animId
-    self.AnimationTrack = self.LocalHumanoid:LoadAnimation(animation)
+    self.AnimationTrack = self.LocalHumanoid:WaitForChild("Animator"):LoadAnimation(animation)
 end
 
 function AnimationUtil:Start()
@@ -52,6 +51,7 @@ end
 
 function AnimationUtil:Stop()
     self.Running = false
+    self.AnimationTrack:Stop()
     self.OnStatusChange("Stopped")
 end
 

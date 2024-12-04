@@ -20,9 +20,10 @@ local function Main()
 	local WeStoppingNow = false
 	local A = nil
 	MainSec:CreateButton("Commence 😈", function()
-		if WeStoppingNow then
+		if WeStoppingNow or A then
 			A:Stop()
 			A = nil
+			Status:UpdateLabel("stopped banging 😈")
 		else
 			A = AnimationController.new({
 				Speed = BangSpeed:GetText(),
@@ -31,8 +32,11 @@ local function Main()
 				OnError = redir,
 				OnStatusChange = redir
 			})
-			A:Start()
-			A:FollowTarget(TargetPlayer:GetText(), CFrame.new(0, 0, 1))
+			if A then
+				A:Start()
+				A:FollowTarget(TargetPlayer:GetText(), CFrame.new(0, 0.1, 1.2))
+				Status:UpdateLabel("we fucking now 😈😈😈")
+			end
 		end
 		WeStoppingNow = not WeStoppingNow
 	end)
