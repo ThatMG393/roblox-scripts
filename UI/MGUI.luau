@@ -338,17 +338,14 @@ function UILibrary.CreateWindow(Options)
             function Section:CreateLabel(LabelText, LabelTextSize)
             	local Label = {}
             	Label.UI = Instance.new("Frame")
-            	Label.UI.Size = UDim2.new(1, 0, 0, 0)
+            	Label.UI.Size = UDim2.new(1, 0, 0.15, 0)
             	Label.UI.AutomaticSize = Enum.AutomaticSize.Y
             	Label.UI.BackgroundColor3 = CurrentTheme.AboveBackground
             	Label.UI.Parent = SectionContent
             	Label.UI.BorderSizePixel = 0
 
-            	CreatePaddingScaled(0.05, Label.UI)
-
             	local TextLabel = Instance.new("TextLabel")
-            	TextLabel.Size = UDim2.new(1, 0, 0, 0)
-            	TextLabel.AutomaticSize = Enum.AutomaticSize.Y
+            	TextLabel.Size = UDim2.new(1, 0, 1, 0)
             	TextLabel.Position = UDim2.new(0, 0, 0, 0)	
             	TextLabel.BackgroundTransparency = 1
             	TextLabel.Text = tostring(LabelText)
