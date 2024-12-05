@@ -723,7 +723,7 @@ function UILibrary.CreateWindow(Options)
 		end
 
 		local NotifOpts = NotifLib.DefaultConfig
-		NotifOpts.StayTime = math.huge
+		NotifOpts.StayTime = 69420
 		NotifOpts.UIReferences = {
 			Notification = NotificationFrame,
 			Close = CloseButton,
