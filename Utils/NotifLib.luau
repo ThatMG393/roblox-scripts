@@ -5,6 +5,7 @@ local TweenService = game:GetService("TweenService")
 local DefaultConfig = {
     Duration = 5,
     AnimationDuration = 0.5,
+    Parent = nil
 }
 
 function NotificationModule.Create(Options)
