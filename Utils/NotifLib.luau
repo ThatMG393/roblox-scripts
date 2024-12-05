@@ -6,7 +6,6 @@ NotificationModule.DefaultConfig = {
 	StayTime = 5,
 	EnterDuration = 0.5,
 	LeaveDuration = 0.5,
-	AdjustDuration = 0.3,
 }
 
 function NotificationModule.Create(Parent: GuiObject)
@@ -17,23 +16,17 @@ function NotificationModule.Create(Parent: GuiObject)
     NotificationGui.BackgroundTransparency = 1
     NotificationGui.Parent = Parent
 
-    local M = { }
-    function M:ShowNotification(Options)
-    	Options = Options or NotificationModule.DefaultConfig
+    local AdjustAnimInfo = TweenInfo.new(0.3, Enum.EasingStyle.Exponential, Enum.EasingDirection.In)
 
-    	local EnterAnimInfo = TweenInfo.new(Options.EnterDuration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    	local LeaveAnimInfo = TweenInfo.new(Options.LeaveDuration, Enum.EasingStyle.Exponential, Enum.EasingDirection.In)
-    	local AdjustAnimInfo = TweenInfo.new(Options.AdjustDuration, Enum.EasingStyle.Exponential, Enum.EasingDirection.In)
-
-    	local M2 = {
-    		Task = nil,
-    	}
-
-    	local UIReferences = Options.UIReferences
+    NotificationGui.ChildAdded:Connect(function(new: Instance)
 		local Notifications = NotificationGui:GetChildren()
 
-		if #Notifications > 0 then
+		if #Notifications > 1 then
     		for _, v in ipairs(Notifications) do
+    			if v == new then
+    				continue
+    			end
+
     			TweenService:Create(
     				v, AdjustAnimInfo, {
     					Position = UDim2.fromScale(
@@ -44,7 +37,20 @@ function NotificationModule.Create(Parent: GuiObject)
     			):Play()
     		end
     	end
+    end)
 
+    local M = { }
+    function M:ShowNotification(Options)
+    	Options = Options or NotificationModule.DefaultConfig
+
+    	local EnterAnimInfo = TweenInfo.new(Options.EnterDuration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    	local LeaveAnimInfo = TweenInfo.new(Options.LeaveDuration, Enum.EasingStyle.Exponential, Enum.EasingDirection.In)
+
+    	local M2 = {
+    		Task = nil,
+    	}
+
+    	local UIReferences = Options.UIReferences
     	UIReferences.Notification.Parent = NotificationGui
     	UIReferences.Notification.Position = UDim2.fromScale(1, 0)
 
@@ -52,7 +58,7 @@ function NotificationModule.Create(Parent: GuiObject)
         
         function M2:CloseNotification()
         	if M2.Task then
-        		task.cancel(M2.Task)
+        		pcall(function() task.cancel(M2.Task) end)
         	end
 
             local SlideOutTween = TweenService:Create(UIReferences.Notification, LeaveAnimInfo, { Position = UDim2.fromScale(2, 0), })
