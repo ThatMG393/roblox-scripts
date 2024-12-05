@@ -51,7 +51,7 @@ function NotificationModule.Create(Parent: GuiObject)
 	function M:ShowNotification(Options)
 		Options = Options or NotificationModule.DefaultConfig
 
-		local EnterAnimInfo = TweenInfo.new(Options.EnterDuration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		local EnterAnimInfo = TweenInfo.new(Options.EnterDuration, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
 		local LeaveAnimInfo = TweenInfo.new(Options.LeaveDuration, Enum.EasingStyle.Exponential, Enum.EasingDirection.In)
 
 		local M2 = {
