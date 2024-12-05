@@ -666,7 +666,7 @@ function UILibrary.CreateWindow(Options)
 
 	function Window:Notify(Title: string, Message: string?)
 		local NotificationFrame = Instance.new("Frame")
-		NotificationFrame.Size = UDim2.fromScale(0.3, 0.3)
+		NotificationFrame.Size = UDim2.fromScale(0.3, 0.25)
 		NotificationFrame.BackgroundColor3 = CurrentTheme.Background
 		NotificationFrame.BorderSizePixel = 0
 
