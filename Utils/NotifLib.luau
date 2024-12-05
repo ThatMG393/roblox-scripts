@@ -63,7 +63,7 @@ function NotificationModule.Create(Parent: GuiObject)
 		UIReferences.Notification.Position = UDim2.fromScale(1, 0)
 
 		MoveNotifications(UIReferences.Notification)
-		
+
 		TweenService:Create(UIReferences.Notification, EnterAnimInfo, { Position = UDim2.fromScale(0, 0) }):Play()
 
 		function M2:CloseNotification()
