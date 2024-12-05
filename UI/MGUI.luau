@@ -686,7 +686,7 @@ function UILibrary.CreateWindow(Options)
 		local CloseButton = Instance.new("TextButton")
 		CloseButton.Name = "CloseButton"
 		CloseButton.Size = UDim2.fromScale(0.1, 0.15)
-		CloseButton.Position = UDim2.fromScale(0.85, 0.025)
+		CloseButton.Position = UDim2.fromScale(1, 0.025)
 		CloseButton.Text = "×"
 		CloseButton.TextSize = 20
 		CloseButton.TextColor3 = CurrentTheme.TextColor
