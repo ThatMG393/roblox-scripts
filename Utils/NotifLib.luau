@@ -29,23 +29,24 @@ function NotificationModule.Create(Parent: GuiObject)
     		Task = nil,
     	}
 
-		local Notifications = NotificationGui:GetChildren()
-		if #Notifications > 1 then
-    		for i, v in ipairs(Notifications) do
-    			TweenService:Create(
-    				v, AdjustAnimInfo, {
-    					Position = UDim2.fromScale(
-    						v.Position.X.Scale,
-    						(v.Position.Y.Scale + v.Size.Y.Scale) + 0.05
-    					)
-    				}
-    			):Play()
-    		end
-    	end
-
 		local UIReferences = Options.UIReferences
     	UIReferences.Notification.Parent = NotificationGui
     	UIReferences.Notification.Position = UDim2.fromScale(1, 0)
+		
+    	for _, v in ipairs(NotificationGui:GetChildren()) do
+    		if v == UIReferences.Notification then
+    			continue
+    		end
+
+    		TweenService:Create(
+    			v, AdjustAnimInfo, {
+    				Position = UDim2.fromScale(
+    					v.Position.X.Scale,
+    					(v.Position.Y.Scale + v.Size.Y.Scale) + 0.05
+    				)
+    			}
+    		):Play()
+    	end	
 
         TweenService:Create(UIReferences.Notification, EnterAnimInfo, { Position = UDim2.fromScale(0, 0), }):Play()
         
