@@ -3,7 +3,7 @@ local NotificationModule = {}
 local TweenService = game:GetService("TweenService")
 
 NotificationModule.DefaultConfig = {
-	StayTime = 5,
+	StayTime = 10,
 	EnterDuration = 0.5,
 	LeaveDuration = 0.5,
 }
@@ -65,7 +65,7 @@ function NotificationModule.Create(Parent: GuiObject)
 				end)
 			end
 
-			local SlideOutTween = TweenService:Create(UIReferences.Notification, LeaveAnimInfo, { Position = UDim2.fromScale(2, 0) })
+			local SlideOutTween = TweenService:Create(UIReferences.Notification, LeaveAnimInfo, { Position = UDim2.fromScale(2, UIReferences.Notification.Position.Y.Scale) })
 			SlideOutTween:Play()
 			SlideOutTween.Completed:Connect(function()
 				UIReferences.Notification:Destroy()
