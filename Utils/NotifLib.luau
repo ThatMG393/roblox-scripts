@@ -12,6 +12,8 @@ function NotificationModule.Create(Parent: GuiObject)
     local NotificationGui = Instance.new("Frame")
     NotificationGui.Name = "NotificationGui"
     NotificationGui.Size = UDim2.fromScale(1, 1)
+    NotificationGui.Position = UDim2.fromScale(0.7, 0)
+    NotificationGui.BackgroundTransparency = 1
     NotificationGui.Parent = Parent
 
     local M = { }
