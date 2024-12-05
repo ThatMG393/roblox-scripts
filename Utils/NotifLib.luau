@@ -31,12 +31,12 @@ function NotificationModule.Create(Parent: GuiObject)
 
 		local Notifications = NotificationGui:GetChildren()
 		if #Notifications > 1 then
-    		for _, v in ipairs(Notifications) do
+    		for i, v in ipairs(Notifications) do
     			TweenService:Create(
     				v, AdjustAnimInfo, {
     					Position = UDim2.fromScale(
     						v.Position.X.Scale,
-    						(v.Position.Y.Scale + v.Size.Y.Scale) + 0.1
+    						(v.Size.Y.Scale * (i + 1)) + 0.1
     					)
     				}
     			):Play()
