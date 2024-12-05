@@ -36,7 +36,7 @@ function NotificationModule.Create(Parent: GuiObject)
     				v, AdjustAnimInfo, {
     					Position = UDim2.fromScale(
     						v.Position.X.Scale,
-    						(v.Position.Y.Scale * 2) + 0.0
+    						(v.Position.Y.Scale + v.Size.Y.Scale) + 0.1
     					)
     				}
     			):Play()
