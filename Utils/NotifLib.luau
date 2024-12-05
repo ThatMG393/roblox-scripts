@@ -2,14 +2,14 @@ local NotificationModule = {}
 
 local TweenService = game:GetService("TweenService")
 
-local DefaultConfig = {
+NotificationModule.DefaultConfig = {
     Duration = 5,
     AnimationDuration = 0.5,
     Parent = nil
 }
 
 function NotificationModule.Create(Options)
-	Options = Options or DefaultConfig
+	Options = Options or NotificationModule.DefaultConfig
 
     local NotificationGui = Instance.new("ScreenGui")
     NotificationGui.Name = "NotificationGui"
