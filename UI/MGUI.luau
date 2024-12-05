@@ -5,6 +5,7 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
 local ColorUtil = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/ColorUtil.luau"))()
+local NotifLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/NotifLib.luau"))() 
 
 UILibrary.Themes = {
 	Dark = {
@@ -74,20 +75,7 @@ function UILibrary.CreateWindow(Options)
 	GUI.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
 	GUI.ResetOnSpawn = Options.ResetOnSpawn
 
-	local NotificationFrame = Instance.new("Frame")
-	NotificationFrame.Name = "Notification"
-	NotificationFrame.Size = UDim2.new(0.3, 0, 0.5, 0)
-	NotificationFrame.Position = UDim2.new(0.7, 0, 0, 0)
-	NotificationFrame.BackgroundTransparency = 1
-	NotificationFrame.Parent = GUI
-	NotificationFrame.BorderSizePixel = 0
-
-	local NotificationList = Instance.new("UIListLayout")
-	NotificationList.FillDirection = Enum.FillDirection.Vertical
-	NotificationList.Padding = UDim.new(0, 4)
-	NotificationList.Parent = NotificationFrame
-
-	CreatePadding(4, NotificationFrame)
+	local NotificationInstance = NotifLib.Create(GUI)
 
 	local MainFrame = Instance.new("Frame")
 	MainFrame.Name = "Main"
@@ -639,8 +627,12 @@ function UILibrary.CreateWindow(Options)
 			Tab:Select()
 		end
 
-		MainFrame:GetPropertyChangedSignal("AbsoluteSize"):Connect(UpdateTabButtonSizes)
 		UpdateTabButtonSizes()
+		MainFrame:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+			if not IsCollapsing then
+				UpdateTabButtonSizes()
+			end
+		end)
 		return Tab
 	end
 
@@ -653,11 +645,8 @@ function UILibrary.CreateWindow(Options)
 		local TabAtIndex = table.remove(TabList, Index)
 		if TabAtIndex then
 			local TabButton = TabAtIndex.Button
-			local TabElement = TabContent["Elements-"..TabButton.Name] -- no need to find cus it always exists
-
+			TabContent["Elements-"..TabButton.Name]:Destroy()
 			TabButton:Destroy()
-			TabElement:Destroy()
-
 			UpdateTabButtonSizes()
 		end
 	end
@@ -671,45 +660,76 @@ function UILibrary.CreateWindow(Options)
 		end
 	end
 
-	function Window:Notify(Title, Message)
-		if true then
-			return
-		end
-
-		local NotifFrame = Instance.new("ScrollingFrame")
-		NotifFrame.Size = UDim2.new(1, 0, 0, 0)
-		NotifFrame.AutomaticSize = Enum.AutomaticSize.Y
-		NotifFrame.BackgroundColor3 = CurrentTheme.Background
-		NotifFrame.Parent = NotificationFrame
-		NotifFrame.BorderSizePixel = 0
-
-		CreatePadding(4, NotifFrame)
-
-		local NotifLabel = Instance.new("TextLabel")
-		NotifLabel.Position = UDim2.new(0, 0, 0, 0)
-		NotifLabel.Size = UDim2.new(1, 0, 0, 0)
-		NotifLabel.AutomaticSize = Enum.AutomaticSize.Y
-		NotifLabel.Text = Title
-		NotifLabel.TextSize = 12
-		NotifLabel.TextColor3 = CurrentTheme.TextColor
-		NotifLabel.BackgroundTransparency = 1
-		NotifLabel.Parent = NotifFrame
-		NotifLabel.BorderSizePixel = 0
-
-		local CloseButton = Instance.new("TextButton")
-		CloseButton.Position = UDim2.new(1, -NotifLabel.AbsoluteSize.Y, 0, 0)
-		CloseButton.Size = UDim2.new(0, 32, 0, 32)
-		CloseButton.Text = "✕"
-		CloseButton.TextSize = 8
-		CloseButton.TextColor3 = Color3.new(1, 0, 0)
-		CloseButton.Font = Enum.Font.GothamBold
-		CloseButton.Parent = NotifFrame
-		CloseButton.BorderSizePixel = 0
-	end
-
 	function Window:GetTabCount()
 		return #TabList
 	end
+
+	function Window:Notify(Title: string, Message: string?)
+    	local NotificationFrame = Instance.new("Frame")
+    	NotificationFrame.Size = UDim2.fromScale(0.3, 0.3)	
+    	NotificationFrame.BackgroundColor3 = CurrentTheme.Background
+    	NotificationFrame.BorderSizePixel = 0
+
+    	CreatePaddingScaled(0.05, NotificationFrame)
+            	
+    	local TitleLabel = Instance.new("TextLabel")
+    	TitleLabel.Name = "TitleLabel"
+		TitleLabel.Size = UDim2.fromScale(0.9, 0.15)
+    	TitleLabel.Position = UDim2.fromScale(0.05, 0.05)
+    	TitleLabel.Font = Enum.Font.GothamBold
+    	TitleLabel.Text = Title
+    	TitleLabel.TextColor3 = CurrentTheme.TextColor
+    	TitleLabel.TextSize = Message and 16 or 18
+    	TitleLabel.BackgroundTransparency = 1
+    	TitleLabel.Parent = NotificationFrame
+    	
+    	local CloseButton = Instance.new("TextButton")
+    	CloseButton.Name = "CloseButton"
+    	CloseButton.Size = UDim2.fromScale(0.1, 0.15)
+    	CloseButton.Position = UDim2.fromScale(0.85, 0.025)
+    	CloseButton.Text = "×"
+    	CloseButton.TextSize = 20
+    	CloseButton.TextColor3 = CurrentTheme.TextColor
+    	CloseButton.BackgroundTransparency = 1
+    	CloseButton.Parent = NotificationFrame
+    	
+    	if Message then
+    		local MessageScroll = Instance.new("ScrollingFrame")
+			MessageScroll.Size = UDim2.fromScale(0.9, 0.75)
+        	MessageScroll.Position = UDim2.fromScale(0.05, 0.25)
+        	MessageScroll.ScrollBarThickness = 1
+        	MessageScroll.BackgroundTransparency = 1
+			MessageScroll.Parent = NotificationFrame
+			MessageScroll.BorderSizePixel = 0
+
+        	local MessageLabel = Instance.new("TextLabel")
+        	MessageLabel.Name = "MessageLabel"
+        	MessageLabel.Size = UDim2.fromScale(1, 0)
+        	MessageLabel.AutomaticSize = Enum.AutomaticSize.Y
+        	MessageLabel.Position = UDim2.fromScale(0, 0)
+        	MessageLabel.Font = Enum.Font.Gotham
+        	MessageLabel.Text = tostring(Message)
+        	MessageLabel.TextColor3 = CurrentTheme.TextColor
+        	MessageLabel.TextSize = 14
+        	MessageLabel.TextWrapped = true
+        	MessageLabel.TextXAlignment = Enum.TextXAlignment.Left
+        	MessageLabel.TextYAlignment = Enum.TextYAlignment.Top
+        	MessageLabel.BackgroundTransparency = 1
+        	MessageLabel.Parent = MessageScroll
+    	else
+        	TitleLabel.Size = UDim2.fromScale(0.9, 1)
+        	TitleLabel.Position = UDim2.fromScale(0.05, 0)
+        	TitleLabel.TextYAlignment = Enum.TextYAlignment.Center
+    	end
+		
+		local NotifOpts = NotifLib.DefaultConfig
+		NotifOpts.UIReferences = {
+			Notification = NotificationFrame,
+			Close = CloseButton,
+		}
+
+    	return NotificationInstance:ShowNotification(NotifOpts)
+    end
 
 	CollapseButton.MouseButton1Click:Connect(Window.Collapse)
 
@@ -746,6 +766,14 @@ function UILibrary:ShowTestUI()
 		MainWindow:RemoveTab(MainWindow:GetTabCount())
 	end)
 
+	MainSection:CreateButton("Show notif", function()
+		MainWindow:Notify("Hello", "World")
+	end)
+
+	MainSection:CreateButton("Show notif (title)", function()
+		MainWindow:Notify("Hello")
+	end)
+
 	local TestTab = MainWindow:CreateTab("More tests tab")
 
 	local TestSection = TestTab:CreateSection("Enabled Elements")
@@ -766,8 +794,6 @@ function UILibrary:ShowTestUI()
 	TestSection2:CreateButton("nuh uh (dis)", function() end):SetDisabled(true)
 	TestSection:CreateInputField("idk bro", "hihi", 9)
 	TestSection2:CreateInputField("idk bro (dis)", "hihi", 9):SetDisabled(true)
-
-	MainWindow:Notify("Hello", "World")
 end
 
 if _G.UI_Debug then
