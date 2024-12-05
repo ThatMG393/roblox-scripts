@@ -18,27 +18,6 @@ function NotificationModule.Create(Parent: GuiObject)
 
     local AdjustAnimInfo = TweenInfo.new(0.3, Enum.EasingStyle.Exponential, Enum.EasingDirection.In)
 
-    NotificationGui.ChildAdded:Connect(function(new: Instance)
-		local Notifications = NotificationGui:GetChildren()
-
-		if #Notifications > 1 then
-    		for _, v in ipairs(Notifications) do
-    			if v == new then
-    				continue
-    			end
-
-    			TweenService:Create(
-    				v, AdjustAnimInfo, {
-    					Position = UDim2.fromScale(
-    						v.Position.X.Scale,
-    						(v.Position.Y.Scale * 2) + 0.0
-    					)
-    				}
-    			):Play()
-    		end
-    	end
-    end)
-
     local M = { }
     function M:ShowNotification(Options)
     	Options = Options or NotificationModule.DefaultConfig
@@ -50,7 +29,21 @@ function NotificationModule.Create(Parent: GuiObject)
     		Task = nil,
     	}
 
-    	local UIReferences = Options.UIReferences
+		local Notifications = NotificationGui:GetChildren()
+		if #Notifications > 1 then
+    		for _, v in ipairs(Notifications) do
+    			TweenService:Create(
+    				v, AdjustAnimInfo, {
+    					Position = UDim2.fromScale(
+    						v.Position.X.Scale,
+    						(v.Position.Y.Scale * 2) + 0.0
+    					)
+    				}
+    			):Play()
+    		end
+    	end
+
+		local UIReferences = Options.UIReferences
     	UIReferences.Notification.Parent = NotificationGui
     	UIReferences.Notification.Position = UDim2.fromScale(1, 0)
 
