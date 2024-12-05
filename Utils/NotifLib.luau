@@ -8,18 +8,23 @@ NotificationModule.DefaultConfig = {
     Parent = nil
 }
 
-function NotificationModule.Create(Options)
-	Options = Options or NotificationModule.DefaultConfig
-
-    local NotificationGui = Instance.new("ScreenGui")
+function NotificationModule.Create(Parent: GuiObject)
+    local NotificationGui = Instance.new("Frame")
     NotificationGui.Name = "NotificationGui"
-    NotificationGui.Parent = Options.Parent
+    NotificationGui.Size = UDim2.fromScale(1, 1)
+    NotificationGui.Parent = Parent
 
     local M = { }
-    function M:ShowNotification(UIReferences)
+    function M:ShowNotification(Options)
+    	Options = Options or NotificationModule.DefaultConfig
+
     	local M2 = {
     		Task = nil,
     	}
+
+    	local UIReferences = Options.UIReferences
+
+    	UIReferences.Notification.Parent = NotificationGui
 
         local SlideInTween = TweenService:Create(UIReferences.Notification,
             TweenInfo.new(Options.AnimationDuration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
