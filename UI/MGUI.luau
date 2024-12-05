@@ -5,7 +5,7 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
 local ColorUtil = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/ColorUtil.luau"))()
-local NotifLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/NotifLib.luau"))() 
+local NotifLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/NotifLib.luau"))()
 
 UILibrary.Themes = {
 	Dark = {
@@ -169,7 +169,7 @@ function UILibrary.CreateWindow(Options)
 			TabContent.Size = UDim2.new(1, 0, 1, -30)
 			TabContent.Position = UDim2.new(0, 0, 0, 30)
 		elseif TabCount <= 1 then
-			TabButtons.Visible = false 
+			TabButtons.Visible = false
 			TabContent.Size = UDim2.new(1, 0, 1, 0)
 			TabContent.Position = UDim2.new(0, 0, 0, 0)
 			return
@@ -186,7 +186,7 @@ function UILibrary.CreateWindow(Options)
 
 		if not (TotalRequiredWidth > TotalWidth) then
 			for _, tab in ipairs(TabList) do
-				TweenService:Create(tab.Button, AnimationOpts, { Size = UDim2.new(0, CalculatedButtonWidth, 0, 30), }):Play()
+				TweenService:Create(tab.Button, AnimationOpts, { Size = UDim2.new(0, CalculatedButtonWidth, 0, 30) }):Play()
 			end
 		end
 	end
@@ -208,11 +208,11 @@ function UILibrary.CreateWindow(Options)
 		local TargetTitleHeight = IsCollapsed and 24 or 30
 		local TargetTextSize = IsCollapsed and 14 or 16
 
-		TweenService:Create(MainFrame, AnimationInfo, { Size = UDim2.new(0, TargetWidth, 0, TargetHeight), }):Play()
-		TweenService:Create(TitleBar, AnimationInfo, { Size = UDim2.new(1, 0, 0, TargetTitleHeight), }):Play()
-		TweenService:Create(TitleText, AnimationInfo, { TextSize = TargetTextSize, }):Play()
+		TweenService:Create(MainFrame, AnimationInfo, { Size = UDim2.new(0, TargetWidth, 0, TargetHeight) }):Play()
+		TweenService:Create(TitleBar, AnimationInfo, { Size = UDim2.new(1, 0, 0, TargetTitleHeight) }):Play()
+		TweenService:Create(TitleText, AnimationInfo, { TextSize = TargetTextSize }):Play()
 
-		local CollapseAnim = TweenService:Create(CollapseButton, AnimationInfo, { Rotation = CollapseButton.Rotation + 180, })
+		local CollapseAnim = TweenService:Create(CollapseButton, AnimationInfo, { Rotation = CollapseButton.Rotation + 180 })
 
 		CollapseAnim:Play()
 		CollapseAnim.Completed:Connect(function()
@@ -645,7 +645,7 @@ function UILibrary.CreateWindow(Options)
 		local TabAtIndex = table.remove(TabList, Index)
 		if TabAtIndex then
 			local TabButton = TabAtIndex.Button
-			TabContent["Elements-"..TabButton.Name]:Destroy()
+			TabContent["Elements-" .. TabButton.Name]:Destroy()
 			TabButton:Destroy()
 			UpdateTabButtonSizes()
 		end
@@ -665,63 +665,63 @@ function UILibrary.CreateWindow(Options)
 	end
 
 	function Window:Notify(Title: string, Message: string?)
-    	local NotificationFrame = Instance.new("Frame")
-    	NotificationFrame.Size = UDim2.fromScale(0.3, 0.3)	
-    	NotificationFrame.BackgroundColor3 = CurrentTheme.Background
-    	NotificationFrame.BorderSizePixel = 0
+		local NotificationFrame = Instance.new("Frame")
+		NotificationFrame.Size = UDim2.fromScale(0.3, 0.3)
+		NotificationFrame.BackgroundColor3 = CurrentTheme.Background
+		NotificationFrame.BorderSizePixel = 0
 
-    	CreatePaddingScaled(0.05, NotificationFrame)
-            	
-    	local TitleLabel = Instance.new("TextLabel")
-    	TitleLabel.Name = "TitleLabel"
+		CreatePaddingScaled(0.05, NotificationFrame)
+
+		local TitleLabel = Instance.new("TextLabel")
+		TitleLabel.Name = "TitleLabel"
 		TitleLabel.Size = UDim2.fromScale(0.9, 0.15)
-    	TitleLabel.Position = UDim2.fromScale(0.05, 0.05)
-    	TitleLabel.Font = Enum.Font.GothamBold
-    	TitleLabel.Text = Title
-    	TitleLabel.TextColor3 = CurrentTheme.TextColor
-    	TitleLabel.TextSize = Message and 16 or 18
-    	TitleLabel.BackgroundTransparency = 1
-    	TitleLabel.Parent = NotificationFrame
-    	
-    	local CloseButton = Instance.new("TextButton")
-    	CloseButton.Name = "CloseButton"
-    	CloseButton.Size = UDim2.fromScale(0.1, 0.15)
-    	CloseButton.Position = UDim2.fromScale(0.85, 0.025)
-    	CloseButton.Text = "×"
-    	CloseButton.TextSize = 20
-    	CloseButton.TextColor3 = CurrentTheme.TextColor
-    	CloseButton.BackgroundTransparency = 1
-    	CloseButton.Parent = NotificationFrame
-    	
-    	if Message then
-    		local MessageScroll = Instance.new("ScrollingFrame")
+		TitleLabel.Position = UDim2.fromScale(0.05, 0.05)
+		TitleLabel.Font = Enum.Font.GothamBold
+		TitleLabel.Text = Title
+		TitleLabel.TextColor3 = CurrentTheme.TextColor
+		TitleLabel.TextSize = Message and 16 or 18
+		TitleLabel.BackgroundTransparency = 1
+		TitleLabel.Parent = NotificationFrame
+
+		local CloseButton = Instance.new("TextButton")
+		CloseButton.Name = "CloseButton"
+		CloseButton.Size = UDim2.fromScale(0.1, 0.15)
+		CloseButton.Position = UDim2.fromScale(0.85, 0.025)
+		CloseButton.Text = "×"
+		CloseButton.TextSize = 20
+		CloseButton.TextColor3 = CurrentTheme.TextColor
+		CloseButton.BackgroundTransparency = 1
+		CloseButton.Parent = NotificationFrame
+
+		if Message then
+			local MessageScroll = Instance.new("ScrollingFrame")
 			MessageScroll.Size = UDim2.fromScale(0.9, 0.75)
-        	MessageScroll.Position = UDim2.fromScale(0.05, 0.25)
-        	MessageScroll.ScrollBarThickness = 1
-        	MessageScroll.BackgroundTransparency = 1
+			MessageScroll.Position = UDim2.fromScale(0.05, 0.25)
+			MessageScroll.ScrollBarThickness = 1
+			MessageScroll.BackgroundTransparency = 1
 			MessageScroll.Parent = NotificationFrame
 			MessageScroll.BorderSizePixel = 0
 
-        	local MessageLabel = Instance.new("TextLabel")
-        	MessageLabel.Name = "MessageLabel"
-        	MessageLabel.Size = UDim2.fromScale(1, 0)
-        	MessageLabel.AutomaticSize = Enum.AutomaticSize.Y
-        	MessageLabel.Position = UDim2.fromScale(0, 0)
-        	MessageLabel.Font = Enum.Font.Gotham
-        	MessageLabel.Text = tostring(Message)
-        	MessageLabel.TextColor3 = CurrentTheme.TextColor
-        	MessageLabel.TextSize = 14
-        	MessageLabel.TextWrapped = true
-        	MessageLabel.TextXAlignment = Enum.TextXAlignment.Left
-        	MessageLabel.TextYAlignment = Enum.TextYAlignment.Top
-        	MessageLabel.BackgroundTransparency = 1
-        	MessageLabel.Parent = MessageScroll
-    	else
-        	TitleLabel.Size = UDim2.fromScale(0.9, 1)
-        	TitleLabel.Position = UDim2.fromScale(0.05, 0)
-        	TitleLabel.TextYAlignment = Enum.TextYAlignment.Center
-    	end
-		
+			local MessageLabel = Instance.new("TextLabel")
+			MessageLabel.Name = "MessageLabel"
+			MessageLabel.Size = UDim2.fromScale(1, 0)
+			MessageLabel.AutomaticSize = Enum.AutomaticSize.Y
+			MessageLabel.Position = UDim2.fromScale(0, 0)
+			MessageLabel.Font = Enum.Font.Gotham
+			MessageLabel.Text = tostring(Message)
+			MessageLabel.TextColor3 = CurrentTheme.TextColor
+			MessageLabel.TextSize = 14
+			MessageLabel.TextWrapped = true
+			MessageLabel.TextXAlignment = Enum.TextXAlignment.Left
+			MessageLabel.TextYAlignment = Enum.TextYAlignment.Top
+			MessageLabel.BackgroundTransparency = 1
+			MessageLabel.Parent = MessageScroll
+		else
+			TitleLabel.Size = UDim2.fromScale(0.9, 1)
+			TitleLabel.Position = UDim2.fromScale(0.05, 0)
+			TitleLabel.TextYAlignment = Enum.TextYAlignment.Center
+		end
+
 		local NotifOpts = NotifLib.DefaultConfig
 		NotifOpts.StayTime = math.huge
 		NotifOpts.UIReferences = {
@@ -729,8 +729,8 @@ function UILibrary.CreateWindow(Options)
 			Close = CloseButton,
 		}
 
-    	return NotificationInstance:ShowNotification(NotifOpts)
-    end
+		return NotificationInstance:ShowNotification(NotifOpts)
+	end
 
 	CollapseButton.MouseButton1Click:Connect(Window.Collapse)
 
