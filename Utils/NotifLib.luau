@@ -50,12 +50,13 @@ function NotificationModule.Create(Parent: GuiObject)
 	local M = {}
 	function M:ShowNotification(Options)
 		Options = Options or NotificationModule.DefaultConfig
-
+		
 		local EnterAnimInfo = TweenInfo.new(Options.EnterDuration, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
 		local LeaveAnimInfo = TweenInfo.new(Options.LeaveDuration, Enum.EasingStyle.Exponential, Enum.EasingDirection.In)
 
 		local M2 = {
 			Task = nil,
+			Closed = false
 		}
 
 		local UIReferences = Options.UIReferences
@@ -67,6 +68,11 @@ function NotificationModule.Create(Parent: GuiObject)
 		TweenService:Create(UIReferences.Notification, EnterAnimInfo, { Position = UDim2.fromScale(0, 0) }):Play()
 
 		function M2:CloseNotification()
+			if self.Closed then
+				return
+			end
+			self.Closed = true
+
 			if M2.Task then
 				pcall(function()
 					task.cancel(M2.Task)
