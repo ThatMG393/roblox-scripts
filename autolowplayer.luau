@@ -7,7 +7,7 @@ local MGUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG39
 local function FindServer(Options)
 	local function GetServers(Cursor: string?)
 		local url = string.format(
-			"https://roproxy.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=%d%s",
+			"https://games.roproxy.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=%d%s",
 			game.PlaceId,
 			Options.ServersPerPage,
 			Cursor and "&cursor=" .. Cursor or ""
