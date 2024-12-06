@@ -1,327 +1,141 @@
-local ServerHopper = {}
-
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
-local TweenService = game:GetService("TweenService")
 
-local TextResizer = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/TextResizer.luau"))()
+local MGUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/UI/MGUI.luau"))()
 
-local SERVERS_PER_PAGE = 100
-local MAX_PAGES = 3
+local function FindServer(Options)
+	local function GetServers(Cursor: string?)
+		local url = string.format(
+			"https://roproxy.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=%d%s",
+			game.PlaceId,
+			Options.ServersPerPage,
+			Cursor and "&cursor=" .. Cursor or ""
+		)
 
-function ServerHopper:FindServer(minPlayer, maxPlayer, minPing, maxPing)
-	local function GetServersAPI(cursor)
-		local url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=%d%s", game.PlaceId, SERVERS_PER_PAGE, cursor and "&cursor=" .. cursor or "")
+		if Options.Debug then
+			print("Pinging " .. url)
+		end
 
-		print(url)
 		return HttpService:JSONDecode(game:HttpGet(url))
 	end
 
-	local function FilterServers()
-		local function FilterServersInternal(servers)
-			for _, server in ipairs(servers) do
-				if server.playing >= minPlayer and server.playing <= maxPlayer and server.ping >= minPing and server.ping <= maxPing then
-					return { serverInfo = server }
-				end
+	local function GetCandidateServer(servers)
+		for _, server in ipairs(servers.data) do
+			if server.playing >= Options.MinPlayer 
+			and server.playing <= Options.MaxPlayer
+			and server.ping >= Options.MinPing
+			and server.ping <= Options.MaxPing then
+				return { serverInfo = server }
 			end
-			return { serverInfo = nil }
-		end
-
-		local servers = GetServersAPI()
-
-		for i = 0, MAX_PAGES do
-			local server = FilterServersInternal(servers)
-			if server.serverInfo ~= nil then
-				return server
-			end
-			servers = GetServersAPI(servers.nextPageCursor)
 		end
 		return { serverInfo = nil }
 	end
-	return FilterServers()
+
+	local servers = GetServers()
+	if servers.error or #servers.data == 0 then
+		Options.Callback(false, servers)
+	end
+	
+	for i = 0, Options.ServerPages do
+		local server = GetCandidateServer(servers)
+		if server.serverInfo ~= nil then
+			Options.Callback(true, server.serverInfo)
+			return
+		end
+		servers = GetServers(servers.nextPageCursor)
+	end
+	Options.Callback(false, nil)
 end
 
-function ServerHopper:InitUI()
-	local ScreenGui = Instance.new("ScreenGui")
-	ScreenGui.Name = "ServerHopperUI"
-	ScreenGui.ResetOnSpawn = false
+local function TableToString(o)
+   if type(o) == 'table' then
+      local s = '{ '
+      for k,v in pairs(o) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. TableToString(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(o)
+   end
+end
 
-	local Container = Instance.new("Frame")
-	Container.Name = "Container"
-	Container.AnchorPoint = Vector2.new(0.5, 0.5)
-	Container.Position = UDim2.new(0.5, 0, 0.5, 0)
-	Container.Size = UDim2.new(0.3, 0, 0.5, 0)
-	Container.BackgroundTransparency = 1
-	Container.Parent = ScreenGui
+local function Main()
+	local WinOpt = MGUI.DefaultWindowOptions
+	WinOpt.WindowTitle = "AutoLowPlayer"
+	WinOpt.WindowSize = { X = 340, Y = 300 }
+	WinOpt.ResetOnSpawn = false
+	
+	local MainWindow = MGUI.CreateWindow(WinOpt)
 
-	local MainFrame = Instance.new("Frame")
-	MainFrame.Name = "MainFrame"
-	MainFrame.Size = UDim2.new(1, 0, 1, 0)
-	MainFrame.Position = UDim2.new(0, 0, 0, 0)
-	MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-	MainFrame.BorderSizePixel = 0
-	MainFrame.Parent = Container
+	local FoundServer = nil
+	local function DoTeleport()
+		MainWindow:Notify("Teleporting to " .. tostring(FoundServer.id) .. "!")
 
-	local UICorner = Instance.new("UICorner")
-	UICorner.CornerRadius = UDim.new(0, 8)
-	UICorner.Parent = MainFrame
-
-	local HeaderContainer = Instance.new("Frame")
-	HeaderContainer.Name = "HeaderContainer"
-	HeaderContainer.Size = UDim2.new(1, 0, 0.1, 0)
-	HeaderContainer.Position = UDim2.new(0, 0, 0, 0)
-	HeaderContainer.BackgroundTransparency = 1
-	HeaderContainer.Parent = MainFrame
-
-	local Title = Instance.new("TextLabel")
-	Title.Name = "Title"
-	Title.Size = UDim2.new(0.85, 0, 1, 0)
-	Title.Position = UDim2.new(0, 0, 0, 0)
-	Title.BackgroundTransparency = 1
-	Title.Text = "Server Hopper"
-	Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-	Title.TextSize = 24
-	Title.Font = Enum.Font.GothamBold
-	Title.Parent = HeaderContainer
-
-	local ExpandButton = Instance.new("TextButton")
-	ExpandButton.Name = "ExpandButton"
-	ExpandButton.Size = UDim2.new(0.15, 0, 1, 0)
-	ExpandButton.Position = UDim2.new(0.85, 0, 0, 0)
-	ExpandButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-	ExpandButton.Text = "▼"
-	ExpandButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-	ExpandButton.TextSize = 20
-	ExpandButton.Font = Enum.Font.GothamBold
-	ExpandButton.Parent = HeaderContainer
-
-	local ExpandButtonCorner = Instance.new("UICorner")
-	ExpandButtonCorner.CornerRadius = UDim.new(0, 6)
-	ExpandButtonCorner.Parent = ExpandButton
-
-	local function createInputGroup(name, placeholder, position)
-		local GroupFrame = Instance.new("Frame")
-		GroupFrame.Name = name .. "Group"
-		GroupFrame.Size = UDim2.new(0.425, 0, 0.25, 0)
-		GroupFrame.Position = position
-		GroupFrame.BackgroundTransparency = 1
-		GroupFrame.Parent = MainFrame
-
-		local Label = Instance.new("TextLabel")
-		Label.Size = UDim2.new(1, 0, 0.3, 0)
-		Label.Position = UDim2.new(0, 0, 0, 0)
-		Label.BackgroundTransparency = 1
-		Label.Text = name
-		Label.TextColor3 = Color3.fromRGB(200, 200, 200)
-		Label.TextSize = 16
-		Label.TextXAlignment = Enum.TextXAlignment.Left
-		Label.Font = Enum.Font.Gotham
-		Label.Parent = GroupFrame
-		TextResizer:AutoResizeTexts(GroupFrame)
-
-		local InputFrame = Instance.new("Frame")
-		InputFrame.Size = UDim2.new(1, 0, 0.6, 0)
-		InputFrame.Position = UDim2.new(0, 0, 0.35, 0)
-		InputFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-		InputFrame.Parent = GroupFrame
-
-		local InputCorner = Instance.new("UICorner")
-		InputCorner.CornerRadius = UDim.new(0, 6)
-		InputCorner.Parent = InputFrame
-
-		local TextBox = Instance.new("TextBox")
-		TextBox.Name = name .. "Input"
-		TextBox.Size = UDim2.new(0.9, 0, 1, 0)
-		TextBox.Position = UDim2.new(0.05, 0, 0, 0)
-		TextBox.BackgroundTransparency = 1
-		TextBox.Text = placeholder
-		TextBox.PlaceholderText = placeholder
-		TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-		TextBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
-		TextBox.TextSize = 18
-		TextBox.Font = Enum.Font.Gotham
-		TextBox.Parent = InputFrame
-		TextResizer:AutoResizeTexts(InputFrame)
-
-		return TextBox
+		task.wait(1)
+		TeleportService:TeleportToPlaceInstance(
+			game.PlaceId, FoundServer.id, Players.LocalPlayer
+		)
 	end
 
-	local MinPlayersInput = createInputGroup("Min Players", "3", UDim2.new(0.05, 0, 0.12, 0))
-	local MaxPlayersInput = createInputGroup("Max Players", "5", UDim2.new(0.525, 0, 0.12, 0))
-	local MinPingInput = createInputGroup("Min Ping", "300", UDim2.new(0.05, 0, 0.4, 0))
-	local MaxPingInput = createInputGroup("Max Ping", "400", UDim2.new(0.525, 0, 0.4, 0))
+	local ConfigTab = MainWindow:CreateTab("Config")
+	local ConfigSection = ConfigTab:CreateSection("Config")
+	local MinPlayer = ConfigSection:CreateInputField("Max server players", 20, 20)
+	local MaxPlayer = ConfigSection:CreateInputField("Min server players", 0, 0)
+	local MinPing = ConfigSection:CreateInputField("Min server ping", 0, 0)
+	local MaxPing = ConfigSection:CreateInputField("Max server ping", 1000, 1000)
+	local JoinWhenFound = ConfigSection:CreateToggle("Join when server found", false)
 
-	local StatusLabel = Instance.new("TextLabel")
-	StatusLabel.Name = "StatusLabel"
-	StatusLabel.Size = UDim2.new(0.9, 0, 0.07, 0)
-	StatusLabel.Position = UDim2.new(0.05, 0, 0.7, 0)
-	StatusLabel.BackgroundTransparency = 1
-	StatusLabel.Text = ""
-	StatusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-	StatusLabel.TextSize = 16
-	StatusLabel.Font = Enum.Font.Gotham
-	StatusLabel.Parent = MainFrame
+	local ExtrasSection = ConfigTab:CreateSection("Extras")
+	local ServersPerPage = ExtrasSection:CreateInputField("Servers per page", 100, 100) --dropdown would be much better
+	local ServerPages = ExtrasSection:CreateInputField("Server pages", 3, 3)
 
-	local function createButton(name, text, position)
-		local disabled = false
+	local DebugSection = ConfigTab:CreateSection("Debug")
+	local DebugToggle = DebugSection:CreateToggle("Debug logs", false)
 
-		local Button = Instance.new("TextButton")
-		Button.Name = name
-		Button.Size = UDim2.new(0.4, 0, 0.08, 0)
-		Button.Position = position
-		Button.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
-		Button.Text = text
-		Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-		Button.TextSize = 18
-		Button.Font = Enum.Font.GothamBold
-		Button.Parent = MainFrame
-
-		local ButtonCorner = Instance.new("UICorner")
-		ButtonCorner.CornerRadius = UDim.new(0, 6)
-		ButtonCorner.Parent = Button
-
-		Button.MouseEnter:Connect(function()
-			if not disabled then
-				TweenService:Create(Button, TweenInfo.new(0.2), {
-					BackgroundColor3 = Color3.fromRGB(0, 100, 210),
-				}):Play()
-			end
-		end)
-
-		Button.MouseLeave:Connect(function()
-			if not disabled then
-				TweenService:Create(Button, TweenInfo.new(0.2), {
-					BackgroundColor3 = Color3.fromRGB(0, 122, 255),
-				}):Play()
-			end
-		end)
-
-		local M = { UI = Button }
-		function M:SetDisabled(d)
-			disabled = d
-			Button.BackgroundColor3 = disabled and Color3.fromRGB(100, 100, 100) or Color3.fromRGB(0, 122, 255)
-		end
-
-		return M
+	local MainTab = MainWindow:CreateTab("Main")
+	local MainSection = MainTab:CreateSection("Main")
+	local StatusLabel = MainSection:CreateLabel("Hello!")
+	local ServerInfoLabel = MainSection:CreateLabel("Server Info: nil")
+	local function UpdateServerInfo(Server)
+		ServerInfoLabel:UpdateLabel("Server Info: Players = " .. tostring(Server.players) .. ", Ping: " .. tostring(Server.ping))
 	end
 
-	local SearchButton = createButton("SearchButton", "Search", UDim2.new(0.05, 0, 0.82, 0))
-	local TeleportButton = createButton("TeleportButton", "Teleport", UDim2.new(0.55, 0, 0.82, 0))
+	local TeleportButton = MainSection:CreateButton("Teleport!!", DoTeleport)
 	TeleportButton:SetDisabled(true)
 
-	local expanded = true
-	local expandedSize = UDim2.new(1, 0, 1, 0)
-	local contractedSize = UDim2.new(1, 0, 0.1, 0)
+	MainSection:CreateButton("Search!", function(Button)
+		Button:SetDisabled(true)
+		TeleportButton:SetDisabled(true)
 
-	ExpandButton.MouseButton1Click:Connect(function()
-		expanded = not expanded
-		ExpandButton.Text = expanded and "▼" or "▲"
-		TweenService:Create(MainFrame, TweenInfo.new(0.3), {
-			Size = expanded and expandedSize or contractedSize,
-		}):Play()
+		FindServer {
+			MinPlayer = MinPlayer:GetText(), MaxPlayer = MaxPlayer:GetText(),
+			MinPing = MinPing:GetText(), MaxPing = MaxPing:GetText(),
+			ServersPerPage = ServersPerPage:GetText(), ServerPages = ServerPages:GetText(),
+			Debug = DebugToggle:GetState(),
+			Callback = function(success: boolean, result: any)
+				if success then
+					UpdateServerInfo(result)
+					FoundServer = result
+
+					if not JoinWhenFound:GetState() then
+						StatusLabel:UpdateLabel("Found server!")
+						TeleportButton:SetDisabled(false)
+						MainWindow:Notify("AutoLowPlayer", "Found server! Check the GUI!")
+					else
+						DoTeleport()
+					end
+				else
+					StatusLabel:UpdateLabel("Failed to find servers.")
+					TeleportButton:SetDisabled(true)
+					MainWindow:Notify("AutoLowPlayer", "Failed to find server! Check the GUI!")
+				end
+
+				Button:SetDisabled(false)
+			end
+		}
 	end)
-
-	local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
-	UIAspectRatioConstraint.AspectRatio = 0.66
-	UIAspectRatioConstraint.Parent = MainFrame
-
-	local UISizeConstraint = Instance.new("UISizeConstraint")
-	UISizeConstraint.MinSize = Vector2.new(200, 300)
-	UISizeConstraint.MaxSize = Vector2.new(400, 600)
-	UISizeConstraint.Parent = Container
-
-	local MakeDraggable = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/MakeDraggable.luau"))()
-	MakeDraggable:MakeDraggable(MainFrame)
-	TextResizer:AutoResizeTexts(MainFrame)
-
-	return {
-		gui = ScreenGui,
-		minPlayersInput = MinPlayersInput,
-		maxPlayersInput = MaxPlayersInput,
-		minPingInput = MinPingInput,
-		maxPingInput = MaxPingInput,
-		searchButton = SearchButton,
-		teleportButton = TeleportButton,
-		statusLabel = StatusLabel,
-	}
 end
 
-function ServerHopper:HandleUI()
-	local ui = ServerHopper:InitUI()
-	local foundServer = nil
-	local searching = false
-
-	local function updateStatus(message, isError)
-		ui.statusLabel.Text = message
-		ui.statusLabel.TextColor3 = isError and Color3.fromRGB(255, 100, 100) or Color3.fromRGB(200, 200, 200)
-	end
-
-	local function validateInputs()
-		local minPlayers = tonumber(ui.minPlayersInput.Text)
-		local maxPlayers = tonumber(ui.maxPlayersInput.Text)
-		local minPing = tonumber(ui.minPingInput.Text)
-		local maxPing = tonumber(ui.maxPingInput.Text)
-
-		if not (minPlayers and maxPlayers and minPing and maxPing) then
-			updateStatus("Please enter valid numbers", true)
-			return false
-		end
-
-		if minPlayers > maxPlayers then
-			updateStatus("Min players must be less than max players", true)
-			return false
-		end
-
-		if minPing > maxPing then
-			updateStatus("Min ping must be less than max ping", true)
-			return false
-		end
-
-		return true
-	end
-
-	ui.searchButton.UI.MouseButton1Click:Connect(function()
-		if not validateInputs() then
-			return
-		end
-		if searching then
-			return
-		end
-		searching = true
-
-		ui.searchButton.UI.Text = "..."
-		ui.searchButton:SetDisabled(true)
-		ui.teleportButton:SetDisabled(true)
-		updateStatus("Searching for server...", false)
-
-		local result = ServerHopper:FindServer(tonumber(ui.minPlayersInput.Text), tonumber(ui.maxPlayersInput.Text), tonumber(ui.minPingInput.Text), tonumber(ui.maxPingInput.Text))
-
-		searching = false
-		ui.searchButton.UI.Text = "Retry"
-		ui.searchButton:SetDisabled(false)
-
-		if result.serverInfo ~= nil then
-			foundServer = result.serverInfo
-			updateStatus("Found server! Ping: " .. foundServer.ping .. ", Players: " .. foundServer.playing)
-			ui.teleportButton:SetDisabled(false)
-		else
-			updateStatus("Failed to find a server", true)
-			ui.teleportButton:SetDisabled(true)
-		end
-	end)
-
-	ui.teleportButton.UI.MouseButton1Click:Connect(function()
-		if searching then
-			return
-		end
-		if foundServer == nil then
-			return
-		end
-		TeleportService:TeleportToPlaceInstance(game.PlaceId, foundServer.id, Players.LocalPlayer)
-	end)
-
-	ui.gui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
-end
-
-ServerHopper:HandleUI()
+Main()

@@ -454,6 +454,10 @@ function UILibrary.CreateWindow(Options)
 					Toggle:SetState(not Toggle.State)
 				end
 
+				function Toggle:GetState()
+					return self.State
+				end
+
 				ToggleButton.MouseButton1Click:Connect(function()
 					if not Toggle.Disabled then
 						Toggle:ToggleState()
