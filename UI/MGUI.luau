@@ -687,7 +687,8 @@ function UILibrary.CreateWindow(Options)
 
 		local TitleLabel = Instance.new("TextLabel")
 		TitleLabel.Name = "TitleLabel"
-		TitleLabel.Size = UDim2.fromScale(0.9, 0.15)
+		TitleLabel.Size = UDim2.fromScale(0.9, 0)
+		TitleLabel.AutomaticSize = Enum.AutomaticSize.Y
 		TitleLabel.Position = UDim2.fromScale(0, 0)
 		TitleLabel.Font = Enum.Font.GothamBold
 		TitleLabel.Text = Title
