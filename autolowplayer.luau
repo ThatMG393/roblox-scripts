@@ -95,7 +95,7 @@ local function Main()
 	local StatusLabel = MainSection:CreateLabel("Hello!")
 	local ServerInfoLabel = MainSection:CreateLabel("Server Info: nil")
 	local function UpdateServerInfo(Server)
-		ServerInfoLabel:UpdateLabel("Server Info: Players = " .. tostring(Server.players) .. ", Ping: " .. tostring(Server.ping))
+		ServerInfoLabel:UpdateLabel("Server Info: Players = " .. tostring(Server.playing) .. ", Ping: " .. tostring(Server.ping))
 	end
 
 	local TeleportButton = MainSection:CreateButton("Teleport!!", DoTeleport)
