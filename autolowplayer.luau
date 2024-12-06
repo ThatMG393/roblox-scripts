@@ -7,7 +7,7 @@ local MGUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG39
 local function FindServer(Options)
 	local function GetServers(Cursor: string?)
 		local url = string.format(
-			"https://games.roproxy.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=%d%s",
+			"https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=%d%s",
 			game.PlaceId,
 			Options.ServersPerPage,
 			Cursor and "&cursor=" .. Cursor or ""
@@ -90,7 +90,7 @@ local function Main()
 
 	local ExtrasSection = ConfigTab:CreateSection("Extras")
 	local ServersPerPage = ExtrasSection:CreateInputField("Servers per page", 100, 100) --dropdown would be much better
-	local ServerPages = ExtrasSection:CreateInputField("Server pages", 3, 3)
+	local ServerPages = ExtrasSection:CreateInputField("Server pages", 1, 1)
 
 	local DebugSection = ConfigTab:CreateSection("Debug")
 	local DebugToggle = DebugSection:CreateToggle("Debug logs", false)
