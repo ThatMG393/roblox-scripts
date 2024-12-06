@@ -405,6 +405,8 @@ function UILibrary.CreateWindow(Options)
 					State = DefaultState or false,
 				}
 
+				Callback = Callback or function (s) end
+
 				Toggle.UI = Instance.new("Frame")
 				Toggle.UI.Name = "Toggle"
 				Toggle.UI.Size = UDim2.new(1, 0, 0, 30)
