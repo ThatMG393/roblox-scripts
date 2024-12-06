@@ -26,6 +26,7 @@ local function Main()
 			A:Stop()
 			A = nil
 			Status:UpdateLabel("stopped banging 😈")
+			workspace.FallenPartsDestroyHeight = -500
 		else
 			A = AnimationController.new {
 				Speed = BangSpeed:GetText(),
@@ -39,6 +40,7 @@ local function Main()
 				A:FollowTarget(TargetPlayer:GetText(), CFrame.new(0, 0, 1.1))
 				Status:UpdateLabel("we fucking now 😈😈😈")
 			end
+			workspace.FallenPartsDestroyHeight = -1000
 		end
 		WeStoppingNow = not WeStoppingNow
 	end)
