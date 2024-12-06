@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
+local DynamicScrolling = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/DynamicScrolling.luau"))()
 local ColorUtil = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/ColorUtil.luau"))()
 local NotifLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/NotifLib.luau"))()
 
@@ -248,12 +249,13 @@ function UILibrary.CreateWindow(Options)
 		Elements.Size = UDim2.new(1, -20, 1, -20)
 		Elements.Position = UDim2.new(0, 10, 0, 10)
 		Elements.BackgroundTransparency = 1
-		Elements.ScrollBarThickness = 1
 		Elements.ScrollingDirection = Enum.ScrollingDirection.Y
 		Elements.ElasticBehavior = Enum.ElasticBehavior.Never
 		Elements.Visible = false
 		Elements.Parent = TabContent
 		Elements.BorderSizePixel = 0
+		
+		DynamicScrolling.Attach(Elements)
 
 		local ListLayout = Instance.new("UIListLayout")
 		ListLayout.Parent = Elements
@@ -670,23 +672,26 @@ function UILibrary.CreateWindow(Options)
 		NotificationFrame.BackgroundColor3 = CurrentTheme.Background
 		NotificationFrame.BorderSizePixel = 0
 
-		CreatePaddingScaled(0.05, NotificationFrame)
+		local NotificationFramePadding = CreatePaddingScaled(0.05, NotificationFrame)
+		NotificationFramePadding.PaddingTop = UDim.new(0.1, 0)
+		NotificationFramePadding.PaddingBottom = UDim.new(0.1, 0)
 
 		local TitleLabel = Instance.new("TextLabel")
 		TitleLabel.Name = "TitleLabel"
 		TitleLabel.Size = UDim2.fromScale(0.9, 0.15)
-		TitleLabel.Position = UDim2.fromScale(0.05, 0.05)
+		TitleLabel.Position = UDim2.fromScale(0, 0)
 		TitleLabel.Font = Enum.Font.GothamBold
 		TitleLabel.Text = Title
 		TitleLabel.TextColor3 = CurrentTheme.TextColor
 		TitleLabel.TextSize = Message and 16 or 18
+		TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 		TitleLabel.BackgroundTransparency = 1
 		TitleLabel.Parent = NotificationFrame
 
 		local CloseButton = Instance.new("TextButton")
 		CloseButton.Name = "CloseButton"
 		CloseButton.Size = UDim2.fromScale(0.1, 0.15)
-		CloseButton.Position = UDim2.fromScale(0.9, 0.025)
+		CloseButton.Position = UDim2.fromScale(0.9, 0)
 		CloseButton.Text = "×"
 		CloseButton.TextSize = 20
 		CloseButton.TextColor3 = CurrentTheme.TextColor
@@ -696,11 +701,13 @@ function UILibrary.CreateWindow(Options)
 		if Message then
 			local MessageScroll = Instance.new("ScrollingFrame")
 			MessageScroll.Size = UDim2.fromScale(0.9, 0.75)
-			MessageScroll.Position = UDim2.fromScale(0.05, 0.25)
-			MessageScroll.ScrollBarThickness = 1
+			MessageScroll.Position = UDim2.fromScale(0, 0.25)
+			MessageScroll.ElasticBehavior = Enum.ElasticBehavior.Never
 			MessageScroll.BackgroundTransparency = 1
 			MessageScroll.Parent = NotificationFrame
 			MessageScroll.BorderSizePixel = 0
+
+			DynamicScrolling.Attach(MessageScroll)
 
 			local MessageLabel = Instance.new("TextLabel")
 			MessageLabel.Name = "MessageLabel"
@@ -719,6 +726,7 @@ function UILibrary.CreateWindow(Options)
 		else
 			TitleLabel.Size = UDim2.fromScale(0.9, 1)
 			TitleLabel.Position = UDim2.fromScale(0.05, 0)
+			TitleLabel.TextXAlignment = Enum.TextXAlignment.Center
 			TitleLabel.TextYAlignment = Enum.TextYAlignment.Center
 		end
 

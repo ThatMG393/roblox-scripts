@@ -96,7 +96,9 @@ function NotificationModule.Create(Parent: GuiObject)
 			end)
 		end
 
-		UIReferences.Close.MouseButton1Click:Connect(M2.CloseNotification)
+		if UIReferences.Close then
+			UIReferences.Close.MouseButton1Click:Connect(M2.CloseNotification)
+		end
 
 		M2.Task = task.delay(Options.StayTime, M2.CloseNotification)
 		return M2
