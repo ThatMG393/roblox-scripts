@@ -5,23 +5,26 @@ local TeleportService = game:GetService("TeleportService")
 local MGUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/UI/MGUI.luau"))()
 
 local function TableToString(o)
-	if type(o) == "table" then
-		local s = "{ "
-		for k, v in pairs(o) do
-			if type(k) ~= "number" then
-				k = '"' .. k .. '"'
-			end
-			s = s .. "[" .. k .. "] = " .. TableToString(v) .. ","
-		end
-		return s .. "} "
-	else
-		return tostring(o)
-	end
+   if type(o) == 'table' then
+      local s = '{ '
+      for k,v in pairs(o) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. TableToString(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(o)
+   end
 end
 
 local function FindServer(Options)
 	local function GetServers(Cursor: string?)
-		local url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=%d%s", game.PlaceId, Options.ServersPerPage, Cursor and "&cursor=" .. Cursor or "")
+		local url = string.format(
+			"https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=%d%s",
+			game.PlaceId,
+			Options.ServersPerPage,
+			Cursor and "&cursor=" .. Cursor or ""
+		)
 
 		if Options.Debug then
 			print("Pinging " .. url)
@@ -32,7 +35,10 @@ local function FindServer(Options)
 
 	local function GetCandidateServer(servers)
 		for _, server in ipairs(servers.data) do
-			if tonumber(server.playing) >= tonumber(Options.MinPlayer) and tonumber(server.playing) <= tonumber(Options.MaxPlayer) and tonumber(server.ping) >= tonumber(Options.MinPing) and tonumber(server.ping) <= tonumber(Options.MaxPing) then
+			if tonumber(server.playing) >= tonumber(Options.MinPlayer)
+			and tonumber(server.playing) <= tonumber(Options.MaxPlayer)
+			and tonumber(server.ping) >= tonumber(Options.MinPing)
+			and tonumber(server.ping) <= tonumber(Options.MaxPing) then
 				return { serverInfo = server }
 			end
 		end
@@ -47,7 +53,7 @@ local function FindServer(Options)
 	if servers.error or #servers.data == 0 then
 		Options.Callback(false, servers)
 	end
-
+	
 	for i = 0, Options.ServerPages do
 		local server = GetCandidateServer(servers)
 		if server.serverInfo ~= nil then
@@ -64,7 +70,7 @@ local function Main()
 	WinOpt.WindowTitle = "AutoLowPlayer"
 	WinOpt.WindowSize = { X = 340, Y = 300 }
 	WinOpt.ResetOnSpawn = false
-
+	
 	local MainWindow = MGUI.CreateWindow(WinOpt)
 
 	local FoundServer = nil
@@ -72,14 +78,16 @@ local function Main()
 		MainWindow:Notify("Teleporting to " .. tostring(FoundServer.id) .. "!")
 
 		task.wait(1)
-		TeleportService:TeleportToPlaceInstance(game.PlaceId, FoundServer.id, Players.LocalPlayer)
+		TeleportService:TeleportToPlaceInstance(
+			game.PlaceId, FoundServer.id, Players.LocalPlayer
+		)
 	end
-
+	
 	local MainTab = MainWindow:CreateTab("Main")
 	local ConfigTab = MainWindow:CreateTab("Config")
 	local ConfigSection = ConfigTab:CreateSection("Config")
-	local MinPlayer = ConfigSection:CreateInputField("Max server players", 20, 20)
-	local MaxPlayer = ConfigSection:CreateInputField("Min server players", 0, 0)
+	local MinPlayer = ConfigSection:CreateInputField("Min server players", 0, 0)
+	local MaxPlayer = ConfigSection:CreateInputField("Max server players", 20, 20)
 	local MinPing = ConfigSection:CreateInputField("Min server ping", 0, 0)
 	local MaxPing = ConfigSection:CreateInputField("Max server ping", 1000, 1000)
 	local JoinWhenFound = ConfigSection:CreateToggle("Join when server found", false)
@@ -106,12 +114,9 @@ local function Main()
 		TeleportButton:SetDisabled(true)
 
 		FindServer {
-			MinPlayer = MinPlayer:GetText(),
-			MaxPlayer = MaxPlayer:GetText(),
-			MinPing = MinPing:GetText(),
-			MaxPing = MaxPing:GetText(),
-			ServersPerPage = ServersPerPage:GetText(),
-			ServerPages = ServerPages:GetText(),
+			MinPlayer = MinPlayer:GetText(), MaxPlayer = MaxPlayer:GetText(),
+			MinPing = MinPing:GetText(), MaxPing = MaxPing:GetText(),
+			ServersPerPage = ServersPerPage:GetText(), ServerPages = ServerPages:GetText(),
 			Debug = DebugToggle:GetState(),
 			Callback = function(success: boolean, result: any)
 				if success then
@@ -132,7 +137,7 @@ local function Main()
 				end
 
 				Button:SetDisabled(false)
-			end,
+			end
 		}
 	end)
 
