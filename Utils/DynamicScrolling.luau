@@ -2,16 +2,16 @@ local DynamicScrolling = {}
 DynamicScrolling.__index = DynamicScrolling
 
 local function GetScaleFromOffset(guiObject: Instance, offsetX: number, offsetY: number): UDim2
-    if guiObject and guiObject:IsA("GuiObject") and guiObject.Parent and guiObject.Parent:IsA("GuiObject") then
-        local parentSize = guiObject.Parent.AbsoluteSize
-        
-        local scaleX = offsetX / parentSize.X
-        local scaleY = offsetY / parentSize.Y
+	if guiObject and guiObject:IsA("GuiObject") and guiObject.Parent and guiObject.Parent:IsA("GuiObject") then
+		local parentSize = guiObject.Parent.AbsoluteSize
 
-        return UDim2.new(scaleX, 0, scaleY, 0)
-    else
-        error("Invalid GuiObject provided.")
-    end
+		local scaleX = offsetX / parentSize.X
+		local scaleY = offsetY / parentSize.Y
+
+		return UDim2.new(scaleX, 0, scaleY, 0)
+	else
+		error("Invalid GuiObject provided.")
+	end
 end
 
 function DynamicScrolling.Attach(scrollingFrame: ScrollingFrame, scrollBarThicknessWhenEnabled: number?)

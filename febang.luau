@@ -2,7 +2,6 @@ local MGUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG39
 local AnimationController = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/AnimationController.luau"))()
 local PlayerGetter = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/PlayerGetter.luau"))()
 
-
 local Players = game:GetService("Players")
 
 local function Main()
@@ -42,7 +41,7 @@ local function Main()
 			}
 			if A ~= nil then
 				A:Start()
-				
+
 				local PlayerName = Players:FindFirstChild(TargetPlayer:GetText())
 				if not PlayerName then
 					PlayerName = Players:FindFirstChild(PlayerGetter:GetPlayerFromDisplayName(TargetPlayer:GetText()))
