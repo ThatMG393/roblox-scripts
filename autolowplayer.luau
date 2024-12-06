@@ -22,10 +22,10 @@ local function FindServer(Options)
 
 	local function GetCandidateServer(servers)
 		for _, server in ipairs(servers.data) do
-			if server.playing >= Options.MinPlayer 
-			and server.playing <= Options.MaxPlayer
-			and server.ping >= Options.MinPing
-			and server.ping <= Options.MaxPing then
+			if server.playing >= tonumber(Options.MinPlayer)
+			and server.playing <= tonumber(Options.MaxPlayer)
+			and server.ping >= tonumber(Options.MinPing)
+			and server.ping <= tonumber(Options.MaxPing) then
 				return { serverInfo = server }
 			end
 		end
