@@ -1,8 +1,13 @@
 local MGUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/UI/MGUI.luau"))()
 local AnimationController = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/AnimationController.luau"))()
+local PlayerGetter = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/Utils/PlayerGetter.luau"))()
+
+
 local Players = game:GetService("Players")
 
 local function Main()
+	PlayerGetter.Init()
+
 	local WinOpt = MGUI.DefaultWindowOptions
 	WinOpt.WindowTitle = "Simple Sex GUI"
 	WinOpt.WindowSize = { X = 317, Y = 280 }
@@ -37,7 +42,13 @@ local function Main()
 			}
 			if A ~= nil then
 				A:Start()
-				A:FollowTarget(TargetPlayer:GetText(), CFrame.new(0, 0, 1.1))
+				
+				local PlayerName = Players:FindFirstChild(TargetPlayer:GetText())
+				if not PlayerName then
+					PlayerName = Players:FindFirstChild(PlayerGetter:GetPlayerFromDisplayName(TargetPlayer:GetText()))
+				end
+
+				A:FollowTarget(PlayerName.Name, CFrame.new(0, 0, 1.1))
 				Status:UpdateLabel("we fucking now 😈😈😈")
 			end
 			workspace.FallenPartsDestroyHeight = -1000
