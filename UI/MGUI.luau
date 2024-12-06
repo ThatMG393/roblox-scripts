@@ -392,7 +392,7 @@ function UILibrary.CreateWindow(Options)
 
 				Button.UI.MouseButton1Click:Connect(function()
 					if not Button.Disabled then
-						Callback()
+						Callback(Button)
 					end
 				end)
 

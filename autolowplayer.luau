@@ -78,7 +78,8 @@ local function Main()
 			game.PlaceId, FoundServer.id, Players.LocalPlayer
 		)
 	end
-
+	
+	local MainTab = MainWindow:CreateTab("Main")
 	local ConfigTab = MainWindow:CreateTab("Config")
 	local ConfigSection = ConfigTab:CreateSection("Config")
 	local MinPlayer = ConfigSection:CreateInputField("Max server players", 20, 20)
@@ -94,7 +95,6 @@ local function Main()
 	local DebugSection = ConfigTab:CreateSection("Debug")
 	local DebugToggle = DebugSection:CreateToggle("Debug logs", false)
 
-	local MainTab = MainWindow:CreateTab("Main")
 	local MainSection = MainTab:CreateSection("Main")
 	local StatusLabel = MainSection:CreateLabel("Hello!")
 	local ServerInfoLabel = MainSection:CreateLabel("Server Info: nil")
@@ -136,6 +136,8 @@ local function Main()
 			end
 		}
 	end)
+
+	MainTab:Select()
 end
 
 Main()
