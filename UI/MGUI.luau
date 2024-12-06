@@ -255,7 +255,7 @@ function UILibrary.CreateWindow(Options)
 		Elements.ElasticBehavior = Enum.ElasticBehavior.Never
 		Elements.Visible = false
 		Elements.Parent = TabContent
-		Elements.BorderSizePixel = 0
+		Elements.BorderSizePixel = 0	
 
 		local ListLayout = Instance.new("UIListLayout")
 		ListLayout.Parent = Elements
@@ -331,11 +331,13 @@ function UILibrary.CreateWindow(Options)
 			function Section:CreateLabel(LabelText, LabelTextSize)
 				local Label = {}
 				Label.UI = Instance.new("Frame")
-				Label.UI.Size = UDim2.new(1, 0, 0.15, 0)
+				Label.UI.Size = UDim2.new(1, 0, 0, 0)
 				Label.UI.AutomaticSize = Enum.AutomaticSize.Y
 				Label.UI.BackgroundColor3 = CurrentTheme.AboveBackground
 				Label.UI.Parent = SectionContent
 				Label.UI.BorderSizePixel = 0
+
+				CreatePaddingScaled(0.1, Label.UI)
 
 				local TextLabel = Instance.new("TextLabel")
 				TextLabel.Size = UDim2.new(1, 0, 1, 0)
@@ -343,6 +345,7 @@ function UILibrary.CreateWindow(Options)
 				TextLabel.BackgroundTransparency = 1
 				TextLabel.Text = tostring(LabelText)
 				TextLabel.TextSize = tonumber(LabelTextSize) or 12
+				TextLabel.TextWrapped = true
 				TextLabel.TextColor3 = CurrentTheme.TextColor
 				TextLabel.Font = Enum.Font.GothamBold
 				TextLabel.TextXAlignment = Enum.TextXAlignment.Center
@@ -405,7 +408,7 @@ function UILibrary.CreateWindow(Options)
 					State = DefaultState or false,
 				}
 
-				Callback = Callback or function(s) end
+				Callback = Callback or function (s) end
 
 				Toggle.UI = Instance.new("Frame")
 				Toggle.UI.Name = "Toggle"
@@ -690,6 +693,7 @@ function UILibrary.CreateWindow(Options)
 		TitleLabel.Text = Title
 		TitleLabel.TextColor3 = CurrentTheme.TextColor
 		TitleLabel.TextSize = Message and 16 or 18
+		TitleLabel.TextWrapped = true
 		TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 		TitleLabel.BackgroundTransparency = 1
 		TitleLabel.Parent = NotificationFrame
