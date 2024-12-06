@@ -255,7 +255,7 @@ function UILibrary.CreateWindow(Options)
 		Elements.ElasticBehavior = Enum.ElasticBehavior.Never
 		Elements.Visible = false
 		Elements.Parent = TabContent
-		Elements.BorderSizePixel = 0	
+		Elements.BorderSizePixel = 0
 
 		local ListLayout = Instance.new("UIListLayout")
 		ListLayout.Parent = Elements
@@ -408,7 +408,7 @@ function UILibrary.CreateWindow(Options)
 					State = DefaultState or false,
 				}
 
-				Callback = Callback or function (s) end
+				Callback = Callback or function(s) end
 
 				Toggle.UI = Instance.new("Frame")
 				Toggle.UI.Name = "Toggle"
