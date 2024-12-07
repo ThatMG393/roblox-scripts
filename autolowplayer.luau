@@ -74,8 +74,17 @@ local function Main()
 		task.wait(1)
 		TeleportService:TeleportToPlaceInstance(game.PlaceId, FoundServer.id, Players.LocalPlayer)
 	end
+	
+	local MainSection = MainWindow:CreateSection("Main")
+	local StatusLabel = MainSection:CreateLabel("Hello!")
+	local ServerInfoLabel = MainSection:CreateLabel("Server Info: nil")
+	local function UpdateServerInfo(Server)
+		ServerInfoLabel:UpdateLabel("Server Info: Players = " .. tostring(Server.playing) .. ", Ping: " .. tostring(Server.ping))
+	end
 
-	local MainTab = MainWindow:CreateTab("Main")
+	local TeleportButton = MainSection:CreateButton("Teleport!!", DoTeleport)
+	TeleportButton:SetDisabled(true)
+
 	local ConfigTab = MainWindow:CreateTab("Config")
 	local ConfigSection = ConfigTab:CreateSection("Config")
 	local MinPlayer = ConfigSection:CreateInputField("Min server players", 0, 0)
@@ -90,16 +99,6 @@ local function Main()
 
 	local DebugSection = ConfigTab:CreateSection("Debug")
 	local DebugToggle = DebugSection:CreateToggle("Debug logs", false)
-
-	local MainSection = MainTab:CreateSection("Main")
-	local StatusLabel = MainSection:CreateLabel("Hello!")
-	local ServerInfoLabel = MainSection:CreateLabel("Server Info: nil")
-	local function UpdateServerInfo(Server)
-		ServerInfoLabel:UpdateLabel("Server Info: Players = " .. tostring(Server.playing) .. ", Ping: " .. tostring(Server.ping))
-	end
-
-	local TeleportButton = MainSection:CreateButton("Teleport!!", DoTeleport)
-	TeleportButton:SetDisabled(true)
 
 	MainSection:CreateButton("Search!", function(Button)
 		Button:SetDisabled(true)
@@ -135,8 +134,6 @@ local function Main()
 			end,
 		}
 	end)
-
-	MainTab:Select()
 end
 
 Main()
