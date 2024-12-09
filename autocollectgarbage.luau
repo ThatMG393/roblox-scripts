@@ -29,33 +29,39 @@ function Main()
     local function LogicStart(Button)
         Button:SetDisabled(true)
         if Stop then
-        	Stop:SetDisabled(false)
+            Stop:SetDisabled(false)
         end
         
-        local T = tonumber(RunEvery:GetText())
-        local MT = tonumber(Threshold:GetText()) * 1024
-        local Once = false
-        
-        RunService:BindToRenderStep("AutoCollectGarbage", Enum.RenderPriority.Last.Value, function()
-            if not Once then
+        local interval = tonumber(RunEvery:GetText()) or 20
+        local thresholdMB = tonumber(Threshold:GetText()) or 1200
+        local thresholdKB = thresholdMB * 1024
+
+        local elapsedTime = 0
+        local once = false
+
+        RunService:BindToRenderStep("AutoCollectGarbage", Enum.RenderPriority.Last.Value, function(delta: number)
+            if not once then
                 MainWindow:Notify("Registered cleaning")
-                Once = true
+                once = true
             end
 
-            if tick() % T == 0 then
-                local MemUsage = collectgarbage("count")
-                if MemUsage > MT then
+            elapsedTime = elapsedTime + delta
+            if elapsedTime >= interval then
+                elapsedTime = 0
+
+                local memUsage = collectgarbage("count")
+                if memUsage > thresholdKB then
                     collectgarbage("collect")
                     MainWindow:Notify("Cleared memory!")
                 end
             end
         end)
-        
+
         MainWindow:Notify("Started monitor.")
     end
 
-    MainSection:CreateButton("Start!", LogicStart)
-    MainSection:CreateButton("Stop", LogicStop)
+    Start = MainSection:CreateButton("Start!", LogicStart)
+    Stop = MainSection:CreateButton("Stop", LogicStop)
     Stop:SetDisabled(true)
 end
 
