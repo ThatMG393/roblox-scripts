@@ -1,7 +1,56 @@
-local MGUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/UI/MGUI.luau"))()
+local MGUI = _G.NoGUI and nil or loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/UI/MGUI.luau"))()
 local RunService = game:GetService("RunService")
 
-function Main()
+local GarbageCollector = {}
+GarbageCollector.__index = GarbageCollector
+
+function GarbageCollector.new(notifyFunc)
+    local self = setmetatable({}, GarbageCollector)
+    self.notify = notifyFunc
+    self._running = false
+    self._elapsedTime = 0
+    return self
+end
+
+function GarbageCollector:Start(interval, thresholdMB)
+    if self._running then return end
+    self._running = true
+    self._elapsedTime = 0
+
+    local thresholdKB = thresholdMB * 1024
+
+    self.notify("Garbage collection monitor started.")
+
+    RunService:BindToRenderStep("AutoCollectGarbage", Enum.RenderPriority.Last.Value, function(delta: number)
+        self._elapsedTime += delta
+
+        if self._elapsedTime >= interval then
+            self._elapsedTime = 0
+
+            local memUsage = collectgarbage("count")
+            if memUsage > thresholdKB then
+                collectgarbage("collect")
+                self.notify("Memory cleaned up!")
+            end
+        end
+    end)
+end
+
+function GarbageCollector:Stop()
+    if not self._running then return end
+    self._running = false
+    RunService:UnbindFromRenderStep("AutoCollectGarbage")
+    self.notify("Garbage collection monitor stopped.")
+end
+
+local function runWithoutGUI()
+    local gcMonitor = GarbageCollector.new(print)
+    local defaultInterval = 20
+    local defaultThreshold = 1200
+    gcMonitor:Start(defaultInterval, defaultThreshold)
+end
+
+local function runWithGUI()
     local WinOpt = MGUI.DefaultWindowOptions
     WinOpt.WindowTitle = "AutoCollectGarbage"
     WinOpt.WindowSize = { X = 340, Y = 300 }
@@ -12,57 +61,43 @@ function Main()
 
     local RunEvery = MainSection:CreateInputField("Run GC every (in seconds)", 20, 20)
     local Threshold = MainSection:CreateInputField("GC Threshold (in MB)", 1200, 1200)
-    
-    local Start = nil
-    local Stop = nil
+
+    local StartButton = nil
+    local StopButton = nil
+
+    local gcMonitor = GarbageCollector.new(MainWindow.Notify)
 
     local function LogicStop(Button)
         Button:SetDisabled(true)
-        if Start then
-            Start:SetDisabled(false)
+        if StartButton then
+            StartButton:SetDisabled(false)
         end
-        
-        RunService:UnbindFromRenderStep("AutoCollectGarbage")
-        MainWindow:Notify("Stopped.")
+        gcMonitor:Stop()
     end
 
     local function LogicStart(Button)
         Button:SetDisabled(true)
-        if Stop then
-            Stop:SetDisabled(false)
+        if StopButton then
+            StopButton:SetDisabled(false)
         end
-        
+
         local interval = tonumber(RunEvery:GetText()) or 20
         local thresholdMB = tonumber(Threshold:GetText()) or 1200
-        local thresholdKB = thresholdMB * 1024
 
-        local elapsedTime = 0
-        local once = false
-
-        RunService:BindToRenderStep("AutoCollectGarbage", Enum.RenderPriority.Last.Value, function(delta: number)
-            if not once then
-                MainWindow:Notify("Registered cleaning")
-                once = true
-            end
-
-            elapsedTime = elapsedTime + delta
-            if elapsedTime >= interval then
-                elapsedTime = 0
-
-                local memUsage = collectgarbage("count")
-                if memUsage > thresholdKB then
-                    collectgarbage("collect")
-                    MainWindow:Notify("Cleared memory!")
-                end
-            end
-        end)
-
-        MainWindow:Notify("Started monitor.")
+        gcMonitor:Start(interval, thresholdMB)
     end
 
-    Start = MainSection:CreateButton("Start!", LogicStart)
-    Stop = MainSection:CreateButton("Stop", LogicStop)
-    Stop:SetDisabled(true)
+    StartButton = MainSection:CreateButton("Start!", LogicStart)
+    StopButton = MainSection:CreateButton("Stop", LogicStop)
+    StopButton:SetDisabled(true)
+end
+
+function Main()
+    if _G.NoGUI then
+        runWithoutGUI()
+    else
+        runWithGUI()
+    end
 end
 
 Main()
