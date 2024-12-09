@@ -65,7 +65,9 @@ local function runWithGUI()
     local StartButton = nil
     local StopButton = nil
 
-    local gcMonitor = GarbageCollector.new(MainWindow.Notify)
+    local gcMonitor = GarbageCollector.new(function(a)
+    	MainWindow:Notify(a)
+    end)
 
     local function LogicStop(Button)
         Button:SetDisabled(true)
