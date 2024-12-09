@@ -10,6 +10,11 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scri
 loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/autolowplayer.luau"))()
 ```
 
+## autocollectgarbage
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/autocollectgarbage.luau"))()
+```
+
 ## bloxfruit
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/ThatMG393/roblox-scripts/master/bloxfruit.luau"))()
