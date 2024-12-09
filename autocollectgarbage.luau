@@ -33,7 +33,7 @@ function Main()
 		Stop:SetDisabled(false)
 		
 		local function EveryFrame()
-    		if tick() % RunEvery:GetText() == 0 then
+    		if tick() % tonumber(RunEvery:GetText()) == 0 then
         		local MemUsage = collectgarbage("count")
     			if MemUsage > tonumber(Threshold:GetText()) then
         			collectgarbage("collect")
