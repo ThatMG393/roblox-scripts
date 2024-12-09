@@ -25,6 +25,7 @@ function Main()
 		if EveryFrameCallback then
 			EveryFrameCallback:Disconnect()
 		end
+		MainWindow:Notify("Stopped.")
 	end
 
 	local function LogicStart(Button)
@@ -42,6 +43,7 @@ function Main()
 		end
 
 		EveryFrameCallback = game:GetService("RunService").Heartbeat:Connect(EveryFrame)
+		MainWindow:Notify("Started monitor.")
 	end
 
 	Start = MainSection:CreateButton("Start!", LogicStart)
