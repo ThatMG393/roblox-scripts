@@ -32,9 +32,11 @@ function Main()
 		Button:SetDisabled(true)
 		Stop:SetDisabled(false)
 		
+		local T = tonumber(RunEvery:GetText())
 		local function EveryFrame()
-    		if tick() % tonumber(RunEvery:GetText()) == 0 then
+    		if tick() % T == 0 then
         		local MemUsage = collectgarbage("count")
+        		print(MemUsage)
     			if MemUsage > tonumber(Threshold:GetText()) then
         			collectgarbage("collect")
         			MainWindow:Notify("Cleared memory!")
